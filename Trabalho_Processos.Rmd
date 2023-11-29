@@ -1,0 +1,50 @@
+---
+titulo: "Cadeias de Markov e Economia da saúde"
+subtitulo: "Uma aplicação utilizando o pacote heemod"
+aluno1:  "Carolina Musso 18/0047850"
+aluno2: "Henrique Oliveira Dumay 19/0121475"
+orientador: "Cira Etheowalda Guevara Otiniano"
+ano: "2/2023"
+referencias: auxiliar/referencias.bib
+output: 
+  bookdown::pdf_document2:
+    template: auxiliar/template.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+```{r bibliotecas, include=FALSE}
+
+#rm(list = ls()) #will clear all objects includes hidden objects.
+#options(rstudio.help.showDataPreview = FALSE)
+# Carregando bibliotecas ---------
+pacman::p_load(tidyverse, dplyr, rio, papeR, patchwork, 
+               kableExtra, pROC, ExhaustiveSearch, scales,
+               sjPlot, sjmisc, performance,lmtest, stringr,
+               heemod)
+
+
+
+```
+
+\newpage
+
+# Introdução e Objetivos
+
+
+
+
+
+
+
+# Apêndice
+
+```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
+```
+
+
+

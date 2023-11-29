@@ -1,0 +1,21 @@
+---
+ titulo: "Análise de Dados Categorizados"
+ subtitulo: "Trabalho Final"
+ aluno1:  "Carolina Musso 18/0047850"
+ aluno2: "Juliana Rosa"
+ orientador: "Maria Tereza Leão"
+ ano: "1/2023"
+ referencias: aux/referencias.bib
+ output: 
+   bookdown::pdf_document2:
+     template: aux/template.tex
+ ---
+
+
+ \newpage
+
+ # Introdução e Objetivos
+
+ A habilidade e a possibilidade de poupar dinheiro pode estar relacionada a diversos fatores. \citeonline{economics} cita a idade, poder aquisitivo, desenvolvimento econômico e inflação como possíveis questões associadas. 
+
+ Este trabalho visa avaliar fatores associados a um chefe de ter familia ter ou não poupança por meio da seleção de um modelo de regressão logística. 
