@@ -1,2 +1,2 @@
-# Trabalho-Processos-Estoc-sticos
-Trabalho Final de processos Estocásticos com a Prof. Cara no semestre de 2/2023 na UnB
+# Trabalho Processos Estocásticos
+Trabalho Final de Processos Estocásticos com a Prof. Cira no semestre 2º/2023 na UnB.
