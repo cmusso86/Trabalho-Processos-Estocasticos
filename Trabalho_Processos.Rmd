@@ -1,4 +1,9 @@
 ---
+output:
+  pdf_document: default
+  html_document: default
+---
+ ---
 titulo: "Cadeias de Markov e Economia da saúde"
 subtitulo: "Uma aplicação utilizando o pacote heemod"
 aluno1:  "Carolina Musso 18/0047850"
@@ -33,10 +38,26 @@ pacman::p_load(tidyverse, dplyr, rio, papeR, patchwork,
 
 \newpage
 
+# Resumo
+
+
 # Introdução e Objetivos
 
 
+# Metodologia
 
+## Processo Semi-Markov com espaço de estados discretos
+
+Um processo estocástico $\{N(t): t \geq 0 \}$ definido pela fórmula $N(t) = sup\{n \in N: \tau_n \leq t \}$ é um processo de contagem correspondente a uma sequência $\{ \tau_n: n \in N \}$.
+Um processo estocástico $\{ X(t): t \geq 0\}$ com espaço de estados discretos S e $X(t) = \xi_n$ é chamado de Processo Semi-Markov associado a um processo de renovação $\{ ( \xi_n, \vartheta):n \in N \}$ com distribuição inicial $p= [p_i(0): i \in S]$ e _kernel_ $Q(t)=[Q_{ij}(t): i,j \in S], t \geq 0$.
+
+# Resultados
+
+
+# Discussão
+
+
+# Conclusão
 
 
 
