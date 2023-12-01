@@ -80,6 +80,26 @@ e $\pi_i$ é a solução da equação anterior.
 
 A probabilidade $P_i$ para um processo Semi-Markov 
 
+## Descrição da questão
+
+Será modelado o transtorno afetivo bipolar. 
+
+Estratégias comparadas
+-------------------------
+Consideraremos duas estratégias:
+- Não tratamento
+- Tratamento de primeira linha conforme as diretrizes CANMAT and ISBD Guidelines
+on the Management of Bipolar Disorder.
+
+Estados:
+------------------------
+Estado assintomático
+Sintomático
+Internação
+
+Parâmetros do modelo:
+------------------------
+
 
 # Resultados
 
