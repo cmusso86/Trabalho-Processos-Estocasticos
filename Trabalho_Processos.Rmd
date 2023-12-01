@@ -38,11 +38,12 @@ pacman::p_load(tidyverse, dplyr, rio, papeR, patchwork,
 
 # Introdução e Objetivos
 
-Avaliação em economia da saúde...
 
+A avaliação econômica em saúde, cada vez mais fundamental na tomada de decisões dos sistemas de saúde, é utilizada para determinar quais intervenções devem ser financiadas com recursos limitados. Essencial em decisões sobre cobertura ou reembolso de novos medicamentos, esta abordagem foi pioneira na Austrália e em Ontário, Canadá. Atualmente é utilizada extensivamente no Reino Unido, onde o Instituto Nacional para Excelência em Saúde e Cuidados Clínicos (NICE) expande seu uso para dispositivos médicos, tecnologias de diagnóstico e procedimentos cirúrgicos \cite{briggs2006decision}.
 
-O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica, que afeta entre 1 e 4% da população mundial @scaini. Caracteriza-se por uma mudança sustentada de humor, com alternância entre polos, que recebem os nomes de mania e depressão, ou leva a estados mistos, normalmente associados a grande prejuízo funcional. A mania é caracterizada como um estado humor elevado, expansivo ou irritado com duração maior que uma semana associado a outros sintomas característicos e é o principal marcador clínico diagnóstico do TAB @dsm. Para um grupo de pessoas, a doença leva a um quadro crônico, persistente e com curso deteriorante. Episódios recorrentes influenciam o desfecho clínico e aumentam a vulnerabilidade individual a novos episódios, além de reduzir a resposta ao tratamento @gama.  
+No Brasil esse é um campo em crescimento, especialmente em vista da necessidade de otimizar os recursos no Sistema Único de Saúde (SUS). Com um sistema de saúde pública que enfrenta desafios de financiamento e desigualdades regionais, a avaliação econômica torna-se crucial para garantir a eficiência na alocação de recursos e no acesso equitativo a tratamentos e tecnologias. Ainda há desafios, como a necessidade de maior capacitação técnica e integração de dados de saúde, mas a avaliação econômica está se tornando uma ferramenta cada vez mais importante na formulação de políticas de saúde no país \cite{scielo2009}.
 
+O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica, que afeta entre 1 e 4% da população mundial @scaini. Caracteriza-se por uma mudança sustentada de humor, com alternância entre polos, que recebem os nomes de mania e depressão, ou leva a estados mistos, normalmente associados a grande prejuízo funcional. A mania é caracterizada como um estado humor elevado, expansivo ou irritado com duração maior que uma semana associado a outros sintomas característicos e é o principal marcador clínico diagnóstico do TAB \cite{dsm}. Para um grupo de pessoas, a doença leva a um quadro crônico, persistente e com curso deteriorante. Episódios recorrentes influenciam o desfecho clínico e aumentam a vulnerabilidade individual a novos episódios, além de reduzir a resposta ao tratamento \cite{gana}.
 
 
 # Metodologia
@@ -77,6 +78,7 @@ $$
 P_i=\frac{\pi_i\mu_i}{\sum_{j=1}^N \pi_jP_{ij}}, i=1,2,...,N
 $$
 e $\pi_i$ é a solução da equação anterior.
+
 
 A probabilidade $P_i$ para um processo Semi-Markov 
 
