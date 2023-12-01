@@ -46,6 +46,10 @@ No Brasil esse é um campo em crescimento, especialmente em vista da necessidade
 O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica, que afeta entre 1 e 4% da população mundial \cite{scaini}. Caracteriza-se por uma mudança sustentada de humor, com alternância entre polos, que recebem os nomes de mania e depressão, ou leva a estados mistos, normalmente associados a grande prejuízo funcional. A mania é caracterizada como um estado humor elevado, expansivo ou irritado com duração maior que uma semana associado a outros sintomas característicos e é o principal marcador clínico diagnóstico do TAB \cite{dsm}. Para um grupo de pessoas, a doença leva a um quadro crônico, persistente e com curso deteriorante. Episódios recorrentes influenciam o desfecho clínico e aumentam a vulnerabilidade individual a novos episódios, além de reduzir a resposta ao tratamento \cite{gana}.
 
 
+O tratamento consiste em ...
+
+O objetivo desse trabalho foi então avaliar a custo-efetividade do tratamento de primeira classe ou nenhum considerando a internacao... (elaborar melhor)
+
 # Metodologia
 
 ## Processo Semi-Markov 
