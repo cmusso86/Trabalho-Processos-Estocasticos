@@ -43,12 +43,18 @@ A avaliação econômica em saúde, cada vez mais fundamental na tomada de decis
 
 No Brasil esse é um campo em crescimento, especialmente em vista da necessidade de otimizar os recursos no Sistema Único de Saúde (SUS). Com um sistema de saúde pública que enfrenta desafios de financiamento e desigualdades regionais, a avaliação econômica torna-se crucial para garantir a eficiência na alocação de recursos e no acesso equitativo a tratamentos e tecnologias. Ainda há desafios, como a necessidade de maior capacitação técnica e integração de dados de saúde, mas a avaliação econômica está se tornando uma ferramenta cada vez mais importante na formulação de políticas de saúde no país \cite{scielo2009}.
 
+Nos estudos de avaliação econômica em saúde, custos e resultados são atribuídos a diferentes estados de saúde (como saudável, doente ou morto) para avaliar a eficiência de várias estratégias de saúde. Esses custos podem incluir despesas médicas ou de medicamentos, enquanto os resultados se referem a anos de vida ou qualidade de vida. Modelos de Markov são utilizados para representar esses estados de saúde e as probabilidades de transição entre eles ao longo do tempo. Embora os modelos de Markov sejam robustos, a programação de modelos personalizados pode ser complexa. Para superar isso, o pacote heemod foi desenvolvido na linguagem R, facilitando a criação e análise de modelos de Markov em avaliações econômicas de saúde, tornando o processo mais acessível e eficiente \cite{heemodpaper, heemodman}
+
 O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica, que afeta entre 1 e 4% da população mundial \cite{scaini}. Caracteriza-se por uma mudança sustentada de humor, com alternância entre polos, que recebem os nomes de mania e depressão, ou leva a estados mistos, normalmente associados a grande prejuízo funcional. A mania é caracterizada como um estado humor elevado, expansivo ou irritado com duração maior que uma semana associado a outros sintomas característicos e é o principal marcador clínico diagnóstico do TAB \cite{dsm}. Para um grupo de pessoas, a doença leva a um quadro crônico, persistente e com curso deteriorante. Episódios recorrentes influenciam o desfecho clínico e aumentam a vulnerabilidade individual a novos episódios, além de reduzir a resposta ao tratamento \cite{gana}.
+
+
 
 
 O tratamento consiste em ...
 
-O objetivo desse trabalho foi então avaliar a custo-efetividade do tratamento de primeira classe ou nenhum considerando a internacao... (elaborar melhor)
+
+
+O objetivo desse trabalho foi então avaliar a custo-efetividade do tratamento de primeira classe ou nenhum considerando a internacao... (elaborar melhor) utilizando o pacote heemod
 
 # Metodologia
 
