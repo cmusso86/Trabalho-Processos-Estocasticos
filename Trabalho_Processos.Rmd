@@ -38,18 +38,31 @@ pacman::p_load(tidyverse, dplyr, rio, papeR, patchwork,
 
 # Introdução e Objetivos
 
-Avaliação em economia da saúde...
+
+A avaliação econômica em saúde, cada vez mais fundamental na tomada de decisões dos sistemas de saúde, é utilizada para determinar quais intervenções devem ser financiadas com recursos limitados. Essencial em decisões sobre cobertura ou reembolso de novos medicamentos, esta abordagem foi pioneira na Austrália e em Ontário, Canadá. Atualmente é utilizada extensivamente no Reino Unido, onde o Instituto Nacional para Excelência em Saúde e Cuidados Clínicos (NICE) expande seu uso para dispositivos médicos, tecnologias de diagnóstico e procedimentos cirúrgicos \cite{briggs2006decision}.
+
+No Brasil esse é um campo em crescimento, especialmente em vista da necessidade de otimizar os recursos no Sistema Único de Saúde (SUS). Com um sistema de saúde pública que enfrenta desafios de financiamento e desigualdades regionais, a avaliação econômica torna-se crucial para garantir a eficiência na alocação de recursos e no acesso equitativo a tratamentos e tecnologias. Ainda há desafios, como a necessidade de maior capacitação técnica e integração de dados de saúde, mas a avaliação econômica está se tornando uma ferramenta cada vez mais importante na formulação de políticas de saúde no país \cite{scielo2009}.
+
+Nos estudos de avaliação econômica em saúde, custos e resultados são atribuídos a diferentes estados de saúde (como saudável, doente ou morto) para avaliar a eficiência de várias estratégias de saúde. Esses custos podem incluir despesas médicas ou de medicamentos, enquanto os resultados se referem a anos de vida ou qualidade de vida. Modelos de Markov são utilizados para representar esses estados de saúde e as probabilidades de transição entre eles ao longo do tempo. Embora os modelos de Markov sejam robustos, a programação de modelos personalizados pode ser complexa. Para superar isso, o pacote heemod foi desenvolvido na linguagem R, facilitando a criação e análise de modelos de Markov em avaliações econômicas de saúde, tornando o processo mais acessível e eficiente \cite{heemodpaper, heemodman}
+
+O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica, que afeta entre 1 e 4% da população mundial \cite{scaini}. Caracteriza-se por uma mudança sustentada de humor, com alternância entre polos, que recebem os nomes de mania e depressão, ou leva a estados mistos, normalmente associados a grande prejuízo funcional. A mania é caracterizada como um estado humor elevado, expansivo ou irritado com duração maior que uma semana associado a outros sintomas característicos e é o principal marcador clínico diagnóstico do TAB \cite{dsm}. Para um grupo de pessoas, a doença leva a um quadro crônico, persistente e com curso deteriorante. Episódios recorrentes influenciam o desfecho clínico e aumentam a vulnerabilidade individual a novos episódios, além de reduzir a resposta ao tratamento \cite{gana}.
 
 
-O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica, que afeta entre 1 e 4% da população mundial @scaini. Caracteriza-se por uma mudança sustentada de humor, com alternância entre polos, que recebem os nomes de mania e depressão, ou leva a estados mistos, normalmente associados a grande prejuízo funcional. A mania é caracterizada como um estado humor elevado, expansivo ou irritado com duração maior que uma semana associado a outros sintomas característicos e é o principal marcador clínico diagnóstico do TAB @dsm. Para um grupo de pessoas, a doença leva a um quadro crônico, persistente e com curso deteriorante. Episódios recorrentes influenciam o desfecho clínico e aumentam a vulnerabilidade individual a novos episódios, além de reduzir a resposta ao tratamento @gama.  
 
 
+O tratamento consiste em ...
+
+
+
+O objetivo desse trabalho foi então avaliar a custo-efetividade do tratamento de primeira classe ou nenhum considerando a internacao... (elaborar melhor) utilizando o pacote heemod
 
 # Metodologia
 
 ## Processo Semi-Markov 
 
-Uma cadeia de markov é um processo estocástico em que a distribuição condicional para qualquer estado futuro $X_{n+1}$, dados os estados passados $X_0, X_1,...,X_{n-1}$ e o estado presente $X_n$, é idependente dos estados passados e depende somente do estado presente @ross. O processo assume um número finito de possíveis valores $\{X_n, n = 0, 1, 2,...\}$ e, se $X_n = i$, considera-se que o processo está no estado **i** no tempo **n**. Assume-se que, quando o processo está no estado **i**, existe uma probabilidade $P_{ij}$ de ir para o estado **j** em seguida. Isto é:
+
+
+Segundo apresentado em \citeonline{ross} uma cadeia de Markov tradicional é um processo estocástico em que a distribuição condicional para qualquer estado futuro $X_{n+1}$, dados os estados passados $X_0, X_1,...,X_{n-1}$ e o estado presente $X_n$, é idependente dos estados passados e depende somente do estado presente . O processo assume um número finito de possíveis valores $\{X_n, n = 0, 1, 2,...\}$ e, se $X_n = i$, considera-se que o processo está no estado **i** no tempo **n**. Assume-se que, quando o processo está no estado **i**, existe uma probabilidade $P_{ij}$ de ir para o estado **j** em seguida. Isto é:
 
 $$
 P\{X(n+1)=j | X_n = i_n, X_{n-1}=i_{n-1}, ..., X_1=i_1, X_0=i_0\}=P_{ij}
@@ -78,7 +91,19 @@ P_i=\frac{\pi_i\mu_i}{\sum_{j=1}^N \pi_jP_{ij}}, i=1,2,...,N
 $$
 e $\pi_i$ é a solução da equação anterior.
 
+
 A probabilidade $P_i$ para um processo Semi-Markov 
+
+De forma intuitiva, podemos o conceito de processos semi-Markov da seguinte maneira: Imagine um processo que pode estar em um de três estados: 1, 2 ou 3. Ele começa no estado 1, onde permanece por um tempo aleatório com média $\mu_1$, depois passa para o estado 2 (tempo médio $\mu_2$), e depois para o estado 3 (tempo médio $\mu_3$). Após isso, retorna ao estado 1 e o ciclo se repete. A questão é: qual a proporção do tempo que o processo passa em cada estado?
+
+Para calcular isso, usamos um processo de renovação-recompensa. Aqui, a "recompensa" é o tempo gasto em cada estado por ciclo. A proporção do tempo em cada estado (Pi) é dada pela média de tempo no estado ($\mu_i$) dividida pela soma das médias de todos os estados. 
+
+Em um processo semi-Markov, cada vez que o processo entra em um estado, ele permanece lá por um tempo aleatório com média $\mu_i$, e depois faz a transição para outro estado com uma probabilidade definida. Se o tempo em cada estado for sempre 1, o processo semi-Markov se torna uma cadeia de Markov. A proporção de tempo em cada estado em um processo semi-Markov também é uma média ponderada, mas levando em conta as probabilidades de transição entre os estados.
+
+Aplicando essa teoria no contexto de Economia da Saúde temos que nos modelos de Markov, as transições futuras de pacientes são determinadas sem considerar a história clínica anterior. Embora útil, esse método pode ser limitado para doenças complexas ou tecnologias de tratamento avançadas, onde o histórico de saúde é crucial. Para superar isso, os modelos semi-Markov foram desenvolvidos. Eles permitem incorporar a 'memória' de eventos anteriores, como a duração desde um tratamento de câncer ou a localização de uma recorrência. Essa abordagem resulta em modelos mais precisos e detalhados, capazes de diferenciar riscos e qualidade de vida com base em históricos específicos de pacientes.
+
+Nos modelos semi-Markov, matrizes de transição multidimensionais são usadas para capturar a dependência temporal, permitindo que o modelo reflita mais precisamente como o estado de saúde de um paciente muda ao longo do tempo e em resposta a diferentes tratamentos. Esse nível de detalhamento é particularmente útil para doenças com progressão complexa ou tratamentos que têm efeitos variáveis ao longo do tempo, tornando os modelos semi-Markov uma ferramenta valiosa em estudos de custo-efetividade e na tomada de decisões em saúde.
+
 
 ## Descrição da questão
 

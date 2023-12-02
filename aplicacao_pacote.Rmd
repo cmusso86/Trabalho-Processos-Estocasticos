@@ -1,0 +1,240 @@
+---
+output:
+  pdf_document:
+    toc: yes
+---
+
+
+
+# ANÁLISE
+
+
+```{r pacotes}
+# PACOTES ----
+rm(list=ls())
+if (!require("pacman")) install.packages("pacman") 
+
+pacman::p_load(heemod, rio, hesim, tidyverse, scales, flextable, janitor)
+```
+
+# ESTRATÉGIA E ESTADOS
+
+Neste trabalho foram comparadas a custo efetividaade de **duas estratégias**.
+
+-   Manutençao da vacinaçãao com a cobertura atual : 30,5\%.
+
+-   Aumentar a coberura para 80\%.
+
+Para esta modelagem, foram então descritos 5 (cinco) **estados de saúde**:
+
+-   Saudável (pre):
+-   HPV+ , sem câncer (hpv):
+-   HPV+ que desenvolveu câncer de orofaringe (opc):
+-   Sobrevida global (svv):
+-   Morte (morte):
+
+
+\newpage
+
+# PARÂMETROS
+
+Os parâmetros foram obtidos da literatura e são apresentados a seguir.
+
+```{r parametros}
+# PARÂMETROS ----
+ 
+
+P_ts = 0.8
+P_iT = 0.1
+P_iC = 0.3
+P_vsT = 0.8
+P_vsC = 0.2
+P_vasT = 0.6
+P_vasC = 0.1
+refr = 0.05
+
+  
+```
+
+
+
+## Probabilidade da pessoa em sobrevivência global
+
+Este estado foi expandido e modelado de maneira diferente dos outros estados, incorporando a dependência de temporralidade dentro inerente do estado, apresentada na seção de [ANÁLISE]. Como explicado, foi utilizanda a possibilidade do pacote heemod de agregar essa temporalidade dentro de cada estado, previsto inicialmente em "modelos de sobrevivência particionados" (Partitioned survival models). Entretanto, não foi possível modelar esse estado como uma função contínua, uma vez que neste estudo não se tem os dados prévios individualizados de uma coorte de sobrevicência para realizar um ajuste, e sim estatísticas sumarizadas obtidas da literatura. Destaforma, essa variável foi modelada de forma discreta, de modo que, uma vez que a pessoa se encontra no estado "Sobrevida global" (svv), a probabilidade de morte é de:
+
+-   0,15 (15%) no primeiro ano que ela está naquele estado.\
+-   0,35 (35%) entre o primeiro e o quinto ano naaquele estado.\
+-   0,40 (40%) para mais de 5 anos que passar naquele estado.
+
+
+
+
+
+```{r matriz}
+# DEFININDO A MATRIZ 
+
+par_mod <- define_parameters(tempo_zero=0,
+                             tempo_cycle = model_time + tempo_zero)
+
+# t tornar
+# v voltar
+# m manter
+# i internar
+
+par_mod <- heemod::modify(par_mod,
+
+P_ts = P_ts,
+P_iT = P_iT ,
+P_iC = P_iC,
+P_vsT = P_vsT,
+P_vsC = P_vsC,
+P_vasT = P_vasT,
+P_vasC = P_vasC,
+refr=refr,
+custo_assintomatico=0,
+custo_sintomatico_trat=5,
+custo_sintomatico_zerot=0,
+custo_internacao=20,
+qaly_assin=0.95,
+qaly_sinto=0.7,
+qaly_int=0.5,
+dr=0.05
+  )
+
+mat_zero <- define_transition(
+  state_names = c("assint", "sint", "intern", "refr"),
+  C,P_ts,0,0,
+  P_vasC,C, P_iC,0,
+  0, P_vsC, C, refr,
+  0, 0, 0, 1)
+
+
+mat_trat <- define_transition(
+  state_names = c("assint", "sint", "intern", "refr"),
+  C,P_ts,0,0,
+  P_casT,C, P_iT,0,
+  0, P_vsT, C, refr,
+  0,0,0,1)
+```
+
+
+## Matriz de transição
+
+Abaixo pode-se visualizar, para efeito de ilustração, a matriz de transição da estratégia "con", em que a cobertua vacinal é mantida em 30,5%.
+
+
+```{r, fig.width=5, fig.cap=legenda0}
+plot(mat_zero)
+```
+
+\newpage
+
+# AJUSTE DO MODELO
+
+
+```{r}
+
+state_assint <- define_state(
+  cost_total=0,
+  qaly = 0.95,
+  ly=1/qaly)
+
+state_sinto_zero<-define_state(
+  cost_total=0,
+  qaly = 0.7,
+  ly=1/qaly
+)
+
+state_sinto_trat<-define_state(
+  cost_total=5,
+  qaly = 0.7,
+  ly=1/qaly
+)
+
+
+state_inter <- define_state(
+  cost_total = 20,
+  qaly=0.5,
+  ly=1/qaly)
+
+state_refr<-define_state(
+  cost_total=0,
+  qaly = 0,
+  ly=0
+)
+
+
+strat_zero <- define_strategy(
+  transition = mat_zero,
+  assint = state_assint,
+  sint = state_sinto_zero,
+  intern = state_inter, 
+  refr=state_refr)
+
+strat_trat <- define_strategy(
+  transition = mat_trat,
+  assint = state_assint,
+  sint = state_sinto_trat,
+  intern = state_inter, 
+  refr=state_refr)
+
+res_mod <- run_model(
+  parameters = par_mod,
+  init = c(100000L,0L ,0L, 0L),
+  zero = strat_zero,
+  trat=strat_trat,
+  cycles = 30,
+  cost = cost_total,
+  central_strategy = "zero",
+  effect = qaly,
+  method = "life-table")
+
+
+
+sumario1<-summary(res_mod)
+(icer1<-sumario1$res_comp$.icer[2])
+
+
+Qaly_pessoa_zero<-sumario1$res_values$qaly[1]/sumario1$res_values$.n_indiv[1]
+Qaly_pessoa_trat<-sumario1$res_values$qaly[2]/sumario1$res_values$.n_indiv[2]
+
+AVG_pessoa_zero<-sumario1$res_values$ly[1]/sumario1$res_values$.n_indiv[1]
+AVG_pessoa_trat<-sumario1$res_values$ly[2]/sumario1$res_values$.n_indiv[2]
+```
+
+
+
+\newpage
+
+# INTERPRETAÇÃO DOS RESULTADOS
+
+
+
+O resultado geral da simulação pode ser visualizada nas tabelas abaixo abaixo.
+
+
+```{r}
+graf_ce_qaly<-ggplot()+
+     geom_vline(xintercept=0)+
+    geom_hline(yintercept=0)+
+    geom_abline(slope = 85,intercept=0, linetype="dotted")+
+     geom_label(aes(x=1.85,y=-86,label="trat"), fill="#b2df8a", size=6)+
+    geom_label(aes(x=0,y=0,label="sem trat"),fill="#a6cee3", size=6)+
+     scale_x_continuous(limits=c(-6,6), breaks=seq(-6,6,1)) +
+     scale_y_continuous(limits=c(-500,500),breaks=seq(-500,500,100))+
+  labs(x="Diferença de QALY",
+       y="Diferença de Custo")+
+  theme_bw(base_size = 16)
+
+
+
+
+```
+
+
+```{r}
+plot(res_mod)
+
+
+```
+
