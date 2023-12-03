@@ -1,6 +1,6 @@
 ---
-titulo: "Cadeias de Markov e Economia da saúde"
-subtitulo: "Uma aplicação utilizando o pacote heemod"
+titulo: "Cadeias de Markov e Economia da Saúde"
+subtitulo: "Uma aplicação do pacote heemod"
 aluno1:  "Carolina Musso 18/0047850"
 aluno2: "Henrique Oliveira Dumay 19/0121475"
 orientador: "Cira Etheowalda Guevara Otiniano"
@@ -36,7 +36,13 @@ pacman::p_load(tidyverse, dplyr, rio, papeR, patchwork,
 
 \newpage
 
-# Resumo
+
+\begin{abstract}
+
+A avaliação econômica em saúde é fundamental para orientar as decisões de alocação de recursos em sistemas de saúde, particularmente em ambientes com restrições orçamentárias, como é o caso do Sistema Único de Saúde (SUS) no Brasil. Nesse contexto, os modelos de Markov emergem como ferramentas valiosas, pois permitem representar os diferentes estados de saúde e suas respectivas transições, incluindo a incorporação de custos associados a cada estado, o que facilita significativamente a análise de custo-efetividade de tratamentos. Este estudo aplica um modelo de Markov, disponível no pacote heemod na linguagem R, para avaliar estratégias de tratamento do Transtorno Afetivo Bipolar (TAB). O pacote heemod oferece suporte tanto para modelos de Markov homogêneos e não-homogêneos, quanto para modelos semi-Markov. No caso específico deste trabalho, optamos por utilizar cadeias de Markov homogêneas, ressaltando, contudo, o potencial do pacote para abordar casos mais complexos. O foco é avaliar, de maneira simplificada, a custo-efetividade de estratégias de tratamento para o TAB, contrastando a abordagem de não tratamento com a de tratamento de primeira linha. O modelo proposto inclui quatro estados - População Geral, Pré-Sintomático, Sintomático e Morte - capturando assim a dinâmica do TAB e seu impacto indireto, mas significativo, na expectativa de vida. Os parâmetros modelados são baseados em evidências da literatura. Os resultados indicam que o tratamento medicamentoso é mais custo-efetivo, proporcionando um ganho de anos de vida para os pacientes e redução de custos totais ao longo de 40 ciclos (40 anos). A aplicação desses modelos em psiquiatria mostra-se promissora, indicando um caminho eficiente para a análise econômica em saúde mental.
+\end{abstract}
+
+\newpage
 
 # Introdução e Objetivos
 
@@ -198,32 +204,23 @@ P(A \to A) = f(s) & P(A \to B) = C \\ P(B \to A) & P(B \to B)
 $$
 
 
-
 Onde \( P(A \to B) \) é a probabilidade de transição entre o estado A e B, \( s \) o número de ciclos gastos no estado A, \( f \) uma função arbitrária que retorna uma probabilidade de transição, e \( C \) o complemento de probabilidade (1 menos a soma das probabilidades em uma linha dada). \( P(B \to A) \) e \( P(B \to B) \) são probabilidades arbitrárias que não dependem do tempo de estado.
-
-
 
 Assim, nos modelos semi-Markov, matrizes de transição multidimensionais são usadas para capturar a dependência temporal, permitindo que o modelo reflita mais precisamente como o estado de saúde de um paciente muda ao longo do tempo e em resposta a diferentes tratamentos. Esse nível de detalhamento é particularmente útil para doenças com progressão complexa ou tratamentos que têm efeitos variáveis ao longo do tempo, tornando os modelos semi-Markov uma ferramenta valiosa em estudos de custo-efetividade e na tomada de decisões em saúde.
 
 ## Descrição da questão
 
-Será modelado o transtorno afetivo bipolar.
+Será modelado o transtorno afetivo bipolar segundo uma cadeia de Markov Homogênia. Comentaremos sobre a possibilidade de expansão para modelos semi-Markov. Nesse modelo consideraremos duas **estratégias**: 
 
-## Estratégias comparadas
+- Não tratamento
 
-Consideraremos duas estratégias: - Não tratamento - Tratamento de
-primeira linha conforme as diretrizes CANMAT and ISBD Guidelines on the
-Management of Bipolar Disorder.
+- Tratamento de primeira linha conforme as diretrizes CANMAT and ISBD Guidelines on the Management of Bipolar Disorder.
 
-## Estados:
+Os estados do modelo são  quatro: População Geral,Pré-Sintomático (ou com sintomas controlados), Sintomático e Morte. Apesar de o TAB não levar à morte diretamente, ele aumenta a chance de morte por suicídio de modo que a expectativa de vida de uma pessoas com TAB chega a ser de 10 anos a menos que a população geral. 
 
-Estado assintomático Sintomático Internação
+Os parâmetros do modelo foram estimados a partir da prevalência da doença na população 
 
-## Parâmetros do modelo:
-
-# Resultados
-
-# Discussão
+# Resultados e Discussão
 
 # Conclusão
 
