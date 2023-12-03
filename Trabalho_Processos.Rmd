@@ -198,28 +198,21 @@ P(A \to A) = f(s) & P(A \to B) = C \\ P(B \to A) & P(B \to B)
 $$
 
 
-
 Onde \( P(A \to B) \) é a probabilidade de transição entre o estado A e B, \( s \) o número de ciclos gastos no estado A, \( f \) uma função arbitrária que retorna uma probabilidade de transição, e \( C \) o complemento de probabilidade (1 menos a soma das probabilidades em uma linha dada). \( P(B \to A) \) e \( P(B \to B) \) são probabilidades arbitrárias que não dependem do tempo de estado.
-
-
 
 Assim, nos modelos semi-Markov, matrizes de transição multidimensionais são usadas para capturar a dependência temporal, permitindo que o modelo reflita mais precisamente como o estado de saúde de um paciente muda ao longo do tempo e em resposta a diferentes tratamentos. Esse nível de detalhamento é particularmente útil para doenças com progressão complexa ou tratamentos que têm efeitos variáveis ao longo do tempo, tornando os modelos semi-Markov uma ferramenta valiosa em estudos de custo-efetividade e na tomada de decisões em saúde.
 
 ## Descrição da questão
 
-Será modelado o transtorno afetivo bipolar.
+Será modelado o transtorno afetivo bipolar segundo uma cadeia de Markov Homogênia. Comentaremos sobre a possibilidade de expansão para modelos semi-Markov. Nesse modelo consideraremos duas **estratégias**: 
 
-## Estratégias comparadas
+- Não tratamento
 
-Consideraremos duas estratégias: - Não tratamento - Tratamento de
-primeira linha conforme as diretrizes CANMAT and ISBD Guidelines on the
-Management of Bipolar Disorder.
+- Tratamento de primeira linha conforme as diretrizes CANMAT and ISBD Guidelines on the Management of Bipolar Disorder.
 
-## Estados:
+Os estados do modelo são  quatro: População Geral,Pré-Sintomático (ou com sintomas controlados), Sintomático e Morte. Apesar de o TAB não levar à morte diretamente, ele aumenta a chance de morte por suicídio de modo que a expectativa de vida de uma pessoas com TAB chega a ser de 10 anos a menos que a população geral. 
 
-Estado assintomático Sintomático Internação
-
-## Parâmetros do modelo:
+Os parâmetros do modelo foram estimados 
 
 # Resultados
 
