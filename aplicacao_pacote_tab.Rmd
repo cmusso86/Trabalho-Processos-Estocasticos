@@ -121,7 +121,7 @@ mat_trat <- define_transition(
 Abaixo pode-se visualizar, para efeito de ilustração, a matriz de transição da estratégia "con", em que a cobertua vacinal é mantida em 30,5%.
 
 
-```{r, fig.width=5, fig.cap=legenda0}
+```{r, fig.width=5, fig.cap="legenda0"}
 plot(mat_zero)
 ```
 
