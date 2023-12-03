@@ -11,11 +11,13 @@ par_mod <- define_parameters(
   p_death_symp = combine_probs(
      p_death_all,
      p_death_disease),
-  p_disease_base = 0.01       , # Probabilidade da doença na população geral
+  p_disease_base = 0.9       , # Probabilidade da doença na população geral
   med_effect = 0.5            , # Efeito da medicação
+  prevalencia = 0.05,
   p_disease_med = p_disease_base * med_effect , # Probabilidade recaída durante tratamento
   cost_hospit_cycle = 100000  , # Custo de cada ciclo de hospitalização
-  p_cured = 0.001,
+  p_cured_base = 0.2,
+  p_cured_med = 0.7,
   cost_med = 5000,
   dr = 0.05,
   qaly_disease = 0.5)
@@ -34,25 +36,27 @@ par_mod <- define_parameters(
 
 
   # p_internacao = 0.30,
-  # p_desinternacao = 0.20
-  )
+  # p_desinternacao = 0.20)
 
 # ------------------------------------------------------------------------
 # Transicoes
 # ------------------------------------------------------------------------
 mat_base <- define_transition(
-  state_names = c("pre", "symp", "death"),
+  state_names = c("geral", "pre", "symp", "death"),
 
-  C,                 p_disease_base,   p_death_all,
-  p_cured,           C           ,     p_death_symp,
-  0,                 0,                1)
+  C,     prevalencia, 0 ,               p_death_all,
+  0,     C,           p_disease_base,   p_death_all, 
+  0,    p_cured,        C           ,   p_death_symp,
+  0,    0,             0,                1)
 
 mat_med <- define_transition(
-  state_names = c("pre", "symp", "death"),
+  state_names = c("geral", "pre", "symp", "death"),
 
-  C,                 p_disease_med,    p_death_all,
-  p_cured,           C           ,     p_death_symp,
-  0,                 0,                1)
+  C,     prevalencia, 0 ,               p_death_all,
+  0,     C,           p_disease_med,   p_death_all, 
+  0,    p_cured,        C           ,   p_death_symp,
+  0,    0,             0,                1)
+
 
 
 
@@ -65,6 +69,13 @@ mat_med <- define_transition(
 # qaly - anos de vida relacionados a saúde ajustados pela qualidade de vida
 #        1 - um ano em perfeita saúde
 #        0 - morte
+
+
+state_geral <- define_state(
+  cost_treat = 0
+  cost_hospit = 0, # good health => no hospital expenses
+  cost_total = 0,
+  qaly = 1)
 
 state_pre <- define_state(
   cost_treat = dispatch_strategy(
@@ -112,7 +123,7 @@ res_mod <- run_model(
   base = strat_base,
   med = strat_med,
 
-  cycles = 10,
+  cycles = 20,
 
   cost = cost_total,
   effect = qaly,
@@ -120,3 +131,5 @@ res_mod <- run_model(
   method = "life-table")
 
 res_mod
+
+plot(res_mod)
