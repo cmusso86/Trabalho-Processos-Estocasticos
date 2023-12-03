@@ -212,11 +212,9 @@ Será modelado o transtorno afetivo bipolar segundo uma cadeia de Markov Homogê
 
 Os estados do modelo são  quatro: População Geral,Pré-Sintomático (ou com sintomas controlados), Sintomático e Morte. Apesar de o TAB não levar à morte diretamente, ele aumenta a chance de morte por suicídio de modo que a expectativa de vida de uma pessoas com TAB chega a ser de 10 anos a menos que a população geral. 
 
-Os parâmetros do modelo foram estimados 
+Os parâmetros do modelo foram estimados a partir da prevalência da doença na população 
 
-# Resultados
-
-# Discussão
+# Resultados e Discussão
 
 # Conclusão
 
