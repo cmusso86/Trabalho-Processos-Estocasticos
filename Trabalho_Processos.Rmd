@@ -99,6 +99,7 @@ O objetivo desse trabalho foi então avaliar a custo-efetividade do
 tratamento de primeira classe ou nenhum considerando a internacao...
 (elaborar melhor) utilizando o pacote heemod
 
+\newpage
 # Metodologia
 
 ## Cadeias de Markov homogêneas
@@ -128,9 +129,11 @@ bidimensional quadrada T, onde o elemento i,j é a probabilidade de
 transição entre o estado i e j. A probabilidade de estar em um dado
 estado no tempo t é dada por:
 
-$X \times T^t$
+$X \times T^t$.
 
-```{r echo=F, out.width="50%", fig.cap="Exemplo de cadeia de Markov em um exemplo de saúde. S pode ser um estado Saudável, I o estado doente e R, o estado absorvente da morte."}
+Figure \@ref(fig:cad) podemos observar um exemplo simples.
+
+```{r cad, echo=F, position="H",  out.width="50%", fig.cap="Exemplo de cadeia de Markov aplicado à saúde. S pode ser um estado Saudável/Sucetível, I o estado doente/infectado e R, o estado absorvente da morte"}
 
 knitr::include_graphics("img/cadeia1.png")
 ```
@@ -324,47 +327,8 @@ prevalência da doença na população, taxas de incidência e risco.
 ```{r echo=F}
 library(heemod)
 
-# ------------------------------------------------------------------------
-# Parâmetros
-# ------------------------------------------------------------------------
-par_mod <- define_parameters(
-  age_base    = 20,
-  age_cycle = model_time + age_base,
-  p_death_all = 262828 / 214300000, # https://cieges.conass.org.br/paineis/listagem/situacao-de-saude-da-populacao/painel-de-analise-do-excesso-de-mortalidade-por-causas-naturais-no-brasil
-  p_death_disease = 0.2       , # Probabilidade de morte por suicídio em TAB
-  p_death_symp = combine_probs(
-     p_death_all,
-     p_death_disease),
-  p_disease_base = 0.9       , # Probabilidade da doença na população geral
-  med_effect = 0.5            , # Efeito da medicação
-  prevalencia = 0.05,
-  p_disease_med = p_disease_base * med_effect , # Probabilidade recaída durante tratamento
-  cost_hospit_cycle = 100000  , # Custo de cada ciclo de hospitalização
-  p_cured_base = 0.2,
-  p_cured_med = 0.7,
-  cost_med = 5000,
-  dr = 0.05,
-  qaly_disease = 0.5)
+## PARA ILUSTRACAO DA CADEIA -----
 
-  # p_doença = 0.03           , # Prevalencia na populacao (%)
-  # p_recaida = 0.9           , # Probabilidade de novos eventos no futuro
-  # p_refratario = 0.1        , # Probabilidade de curso refratario
-
-  # efeito_tto = 0.1          , # Efeito do tratamento
-  # p_doenca_medicado = p_recaida * efeito_tto ,# Probabilidade de recaída após medicação
-  # p_cura = 0.001            , # Probabilidade de reversão para estágio assintomático
-  # custo_medicacao = 6000    ,
-  # custo_internacao = 100000 ,
-  # dr = 0.05                 , # Discount rate
-  # qaly_doenca = 0.5         , # QALY para um ano no estado sintomático
-
-
-  # p_internacao = 0.30,
-  # p_desinternacao = 0.20)
-
-# ------------------------------------------------------------------------
-# Transicoes
-# ------------------------------------------------------------------------
 mat_base <- define_transition(
   state_names = c("geral", "pre", "symp", "death"),
 
@@ -399,9 +363,11 @@ pacote, temos:
 ```{r}
 library(heemod)
 
-# ------------------------------------------------------------------------
+# APLICACAO EM TAB
+
+# ---------------------
 # Parâmetros
-# ------------------------------------------------------------------------
+# --------------------
 par_mod <- define_parameters(
   age_base = 20,
   age_cycle = model_time + age_base,
@@ -520,13 +486,24 @@ res_mod <- run_model(
 
 Podemos observar o seguinte resultado:
 
-```{r}
+```{r, fig.cap="Quarente ciclos no modelo de Markov comparando as duas estartegias"}
 plot(res_mod)
 ```
 
+
+Finalmente, podemos an
 # Conclusão
 
+Este relatório ilustrou a aplicabilidade e a eficácia dos modelos de Markov na avaliação econômica em saúde, com um foco particular no Transtorno Afetivo Bipolar (TAB). Através do uso do pacote heemod na linguagem R, demonstramos como as cadeias de Markov homogêneas podem simplificar e esclarecer a análise de custo-efetividade em estratégias de tratamento. Ao comparar a não intervenção com o tratamento de primeira linha, os resultados sugerem um claro benefício no uso de medicamentos, evidenciado pelo aumento de anos de vida ajustados pela qualidade e pela redução dos custos totais ao longo de um horizonte temporal de quatro décadas. Tal benefício transcende as métricas econômicas, refletindo um potencial impacto positivo significativo na qualidade de vida dos pacientes.
+
+Além disso, a discussão sobre a expansão potencial para modelos semi-Markov destaca a versatilidade do pacote heemod em abordar complexidades adicionais, como a progressão da doença e a história clínica dos pacientes. A aplicação desses modelos em estudos de custo-efetividade no campo da psiquiatria, particularmente, revela-se não apenas viável, mas também necessária, dada a complexidade dos padrões de tratamento e progressão da doença no TAB.
+
+Portanto, concluímos que a modelagem de Markov representa uma ferramenta robusta e flexível, essencial para a tomada de decisões informadas em saúde pública. A incorporação desses modelos em avaliações econômicas fornece insights valiosos que podem guiar políticas de saúde, otimizar o uso de recursos e, o mais importante, melhorar os desfechos para os pacientes. A continuidade na pesquisa e no desenvolvimento de métodos avançados de modelagem, como os explorados neste relatório, é crucial para enfrentarmos os desafios da economia da saúde no Brasil e no mundo.
+
+\newpage
 # Apêndice
 
 ```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```
+
+\newpage
