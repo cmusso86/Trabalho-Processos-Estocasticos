@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = FALSE,
 pacman::p_load(tidyverse, dplyr, rio, papeR, patchwork, 
                kableExtra, pROC, ExhaustiveSearch, scales,
                sjPlot, sjmisc, performance,lmtest, stringr,
-               heemod)
+               heemod, patchwork)
 
 
 
@@ -135,6 +135,7 @@ $X \times T^t$
 knitr::include_graphics("img/cadeia1.png")
 ```
 
+\newpage
 ## Cadeias de Markov homogêneas
 
 Uma cadeia de Markov não-homogênea é uma extensão do conceito de cadeias
@@ -185,13 +186,15 @@ obtida/estimadas pelas tábuas de vida demográficas.
 
 ## Processo semi-Markov
 
+Um processo semi-Markoviano é um processo é um processo a tempo contínuo. Dessa forma se considerar t interio, ou seja a cadeia mudar em uma unidade de tempo, t=1,2, o processo é de Markov a tempo discreto
+
 Um processo estocástico $\{N(t): t \geq 0 \}$ que pode estar em qualquer
 um de N estados $(1, 2, ..., N)$ e, a cada vez que entrar em um estado
 **i**, lá permanecer por uma quantidade de tempo aleatória, com média
 $\mu_i$ e, então, ir para um estado **j** com probabilidade $P_{ij}$ é
 chamado de *processo semi-markov*. Diferencia-se de uma cadeia de Markov
 por, nesta última, o tempo em que um processo passa em cada estado antes
-de uma transição ter distribuição constante.
+de uma transição ser fixo.
 
 A proporção de tempo que um processo permanece em um estado **i** é dado
 por:
@@ -236,7 +239,7 @@ dividida pela soma das médias de todos os estados.
 Em um processo semi-Markov, cada vez que o processo entra em um estado,
 ele permanece lá por um tempo aleatório com média $\mu_i$, e depois faz
 a transição para outro estado com uma probabilidade definida. Se o tempo
-em cada tover distribuição constante, o processo semi-Markov se torna
+em cada estado for  um valor fixo, o processo semi-Markov se torna
 uma cadeia de Markov. A proporção de tempo em cada estado em um processo
 semi-Markov também é uma média ponderada, mas levando em conta as
 probabilidades de transição entre os estados.
@@ -301,10 +304,209 @@ morte diretamente, ele aumenta a chance de morte por suicídio de modo
 que a expectativa de vida de uma pessoas com TAB chega a ser de 10 anos
 a menos que a população geral.
 
-Os parâmetros do modelo foram estimados a partir da prevalência da
-doença na população
+Os as probabilidades de transição foram estimados a partir da prevalência da doença na população, taxas de incidência e risco. 
+
+```{r echo=F}
+library(heemod)
+
+# ------------------------------------------------------------------------
+# Parâmetros
+# ------------------------------------------------------------------------
+par_mod <- define_parameters(
+  age_base    = 20,
+  age_cycle = model_time + age_base,
+  p_death_all = 262828 / 214300000, # https://cieges.conass.org.br/paineis/listagem/situacao-de-saude-da-populacao/painel-de-analise-do-excesso-de-mortalidade-por-causas-naturais-no-brasil
+  p_death_disease = 0.2       , # Probabilidade de morte por suicídio em TAB
+  p_death_symp = combine_probs(
+     p_death_all,
+     p_death_disease),
+  p_disease_base = 0.9       , # Probabilidade da doença na população geral
+  med_effect = 0.5            , # Efeito da medicação
+  prevalencia = 0.05,
+  p_disease_med = p_disease_base * med_effect , # Probabilidade recaída durante tratamento
+  cost_hospit_cycle = 100000  , # Custo de cada ciclo de hospitalização
+  p_cured_base = 0.2,
+  p_cured_med = 0.7,
+  cost_med = 5000,
+  dr = 0.05,
+  qaly_disease = 0.5)
+
+  # p_doença = 0.03           , # Prevalencia na populacao (%)
+  # p_recaida = 0.9           , # Probabilidade de novos eventos no futuro
+  # p_refratario = 0.1        , # Probabilidade de curso refratario
+
+  # efeito_tto = 0.1          , # Efeito do tratamento
+  # p_doenca_medicado = p_recaida * efeito_tto ,# Probabilidade de recaída após medicação
+  # p_cura = 0.001            , # Probabilidade de reversão para estágio assintomático
+  # custo_medicacao = 6000    ,
+  # custo_internacao = 100000 ,
+  # dr = 0.05                 , # Discount rate
+  # qaly_doenca = 0.5         , # QALY para um ano no estado sintomático
+
+
+  # p_internacao = 0.30,
+  # p_desinternacao = 0.20)
+
+# ------------------------------------------------------------------------
+# Transicoes
+# ------------------------------------------------------------------------
+mat_base <- define_transition(
+  state_names = c("geral", "pre", "symp", "death"),
+
+  0.949,     0.05 , 0 ,  0.001,
+  0,     0.01,           0.9,   0.001, 
+  0,    0.1,        0.7           ,   0.2,
+  0,    0,             0,                1)
+
+mat_med <- define_transition(
+  state_names = c("geral", "pre", "symp", "death"),
+
+
+  0.949,     0.05 , 0 ,  0.001,
+  0,     0.01,           0.45,   0.001, 
+  0,    0.7,        0.1           ,   0.2,
+  0,    0,             0,                1)
+
+```
+
+```{r fig.show="hold", out.width="48%", fig.cap="Cadeia de Markov para as duas estratégias abordadas. Sem tratamento (esquerda) e com tratamento (direita)"}
+par(mar = c(0,0,0,0))
+plot(mat_base)
+plot(mat_med)
+```
+
 
 # Resultados e Discussão
+
+Os parâmetros da cadeia de transição foram obtidos como descrito anteriormente, assim como o custo dos estados. Seguindo as intruções do pacote, temos: 
+
+```{r}
+library(heemod)
+
+# ------------------------------------------------------------------------
+# Parâmetros
+# ------------------------------------------------------------------------
+par_mod <- define_parameters(
+  age_base = 20,
+  age_cycle = model_time + age_base,
+  p_death_all = 262828 / 214300000, #excesso de mortalidade causas naturais
+  p_death_disease = 0.2, # Probabilidade de morte por suicídio em TAB
+  p_death_symp = combine_probs(
+     p_death_all,
+     p_death_disease),
+  p_disease_base = 0.9, # Probabilidade da doença na população assinto
+  med_effect = 0.5 , # Efeito da medicação
+  prevalencia = 0.05,
+  p_disease_med = p_disease_base * med_effect , # Probabilidade recaída 
+  cost_hospit_cycle = 100000  , # Custo de cada ciclo de hospitalização
+  p_cured_base = 0.2,
+  p_cured_med = 0.7,
+  cost_med = 5000,
+  dr = 0.05,
+  qaly_disease = 0.5)
+
+```
+
+Em seguida, defini-se as matrizes, estados e estratégias. 
+
+```{r}
+# ------------------------------------------------------------------------
+# Transicoes
+# ------------------------------------------------------------------------
+mat_base <- define_transition(
+  state_names = c("geral", "pre", "symp", "death"),
+
+  C,     prevalencia, 0 ,               p_death_all,
+  0,     C,           p_disease_base,   p_death_all, 
+  0,    p_cured,        C           ,   p_death_symp,
+  0,    0,             0,                1)
+
+mat_med <- define_transition(
+  state_names = c("geral", "pre", "symp", "death"),
+
+  C,     prevalencia, 0 ,               p_death_all,
+  0,     C,           p_disease_med,   p_death_all, 
+  0,    p_cured,        C           ,   p_death_symp,
+  0,    0,             0,                1)
+
+
+
+
+# ------------------------------------------------------------------------
+# Valores de estados
+# ------------------------------------------------------------------------
+# custo_medicacao - custo do tratamento
+# custo_internacao - custo da internação
+# custo_total - custo total
+# qaly - anos de vida relacionados a saúde ajustados pela qualidade de vida
+#        1 - um ano em perfeita saúde
+#        0 - morte
+
+
+state_geral <- define_state(
+  cost_treat = 0,
+  cost_hospit = 0, # good health => no hospital expenses
+  cost_total = 0,
+  qaly = 1)
+
+state_pre <- define_state(
+  cost_treat = dispatch_strategy(
+    base = 0, # no treatment => no treatment cost
+    med = cost_med),
+  cost_hospit = 0, # good health => no hospital expenses
+  cost_total = discount(cost_treat + cost_hospit, r = dr),
+  qaly = 1)
+
+state_symp <- define_state(
+  cost_treat = 0,
+  cost_hospit = cost_hospit_cycle,
+  cost_total = discount(cost_treat + cost_hospit, r = dr),
+  qaly = qaly_disease)
+
+state_death <- define_state(
+  cost_treat = 0,
+  cost_hospit = 0,
+  cost_total = 0,
+  qaly = 0)
+
+# ------------------------------------------------------------------------
+# Estrategias
+# ------------------------------------------------------------------------
+strat_base <- define_strategy(
+  transition = mat_base,
+
+  pre = state_pre,
+  symp = state_symp,
+  death = state_death)
+
+strat_med <- define_strategy(
+  transition = mat_med,
+
+  pre = state_pre,
+  symp = state_symp,
+  death = state_death)
+
+
+```
+
+Finalmente, ajusta-se o modelo, definindo-se a quantidade de ciclos. 
+
+```{r}
+res_mod <- run_model(
+  parameters = par_mod,
+  base = strat_base,
+  med = strat_med,
+  cycles = 20,
+  cost = cost_total,
+  effect = qaly,
+  method = "life-table")
+```
+
+Podemos observar o seguinte resultado:
+
+```{r}
+plot(res_mod)
+```
 
 # Conclusão
 
