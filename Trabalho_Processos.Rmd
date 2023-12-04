@@ -100,6 +100,7 @@ tratamento de primeira classe ou nenhum considerando a internacao...
 (elaborar melhor) utilizando o pacote heemod
 
 \newpage
+
 # Metodologia
 
 ## Cadeias de Markov homogêneas
@@ -491,7 +492,23 @@ plot(res_mod)
 ```
 
 
-Finalmente, podemos an
+Finalmente, podemos analisar a custo efetividade observando o gráfico.
+
+```{r echo=F, out.width="70%", fig.cap="Relação dda diferença de Quality-ajustes life-years e de custo entre as suas estratégias."}
+ggplot()+
+     geom_vline(xintercept=0)+
+    geom_hline(yintercept=0)+
+    geom_abline(slope = 85,intercept=0, linetype="dotted")+
+     geom_label(aes(x=4.127844,y=-37,label="trat"), fill="#b2df8a", size=6)+
+    geom_label(aes(x=0,y=0,label="sem trat"),fill="#a6cee3", size=6)+
+     scale_x_continuous(limits=c(-6,6), breaks=seq(-6,6,1)) +
+     scale_y_continuous(limits=c(-500,500),breaks=seq(-500,500,100))+
+  labs(x="Diferença de QALY",
+       y="Diferença de Custo")+
+  theme_bw(base_size = 12)
+```
+
+\newpage
 # Conclusão
 
 Este relatório ilustrou a aplicabilidade e a eficácia dos modelos de Markov na avaliação econômica em saúde, com um foco particular no Transtorno Afetivo Bipolar (TAB). Através do uso do pacote heemod na linguagem R, demonstramos como as cadeias de Markov homogêneas podem simplificar e esclarecer a análise de custo-efetividade em estratégias de tratamento. Ao comparar a não intervenção com o tratamento de primeira linha, os resultados sugerem um claro benefício no uso de medicamentos, evidenciado pelo aumento de anos de vida ajustados pela qualidade e pela redução dos custos totais ao longo de um horizonte temporal de quatro décadas. Tal benefício transcende as métricas econômicas, refletindo um potencial impacto positivo significativo na qualidade de vida dos pacientes.
@@ -501,6 +518,7 @@ Além disso, a discussão sobre a expansão potencial para modelos semi-Markov d
 Portanto, concluímos que a modelagem de Markov representa uma ferramenta robusta e flexível, essencial para a tomada de decisões informadas em saúde pública. A incorporação desses modelos em avaliações econômicas fornece insights valiosos que podem guiar políticas de saúde, otimizar o uso de recursos e, o mais importante, melhorar os desfechos para os pacientes. A continuidade na pesquisa e no desenvolvimento de métodos avançados de modelagem, como os explorados neste relatório, é crucial para enfrentarmos os desafios da economia da saúde no Brasil e no mundo.
 
 \newpage
+
 # Apêndice
 
 ```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
