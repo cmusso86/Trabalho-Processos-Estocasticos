@@ -122,7 +122,11 @@ tempo **n**. Assume-se que, quando o processo está no estado **i**,
 existe uma probabilidade $P_{ij}$ de ir para o estado **j** em seguida.
 Isto é:
 
-$$P\{X(n+1)=j | X_n = i_n, X_{n-1}=i_{n-1}, ..., X_1=i_1, X_0=i_0\}=P_{ij} $$
+\begin{equation}
+P\{X(n+1)=j | X_n = i_n, X_{n-1}=i_{n-1}, ..., X_1=i_1, X_0=i_0\}=P_{ij}
+\label{eq:markov_transitionhomo}
+\end{equation}
+
 para todos os estados $i_0,i_1,...,i_{n},j$ e para todo $n \geq 0$.
 valor $P_{ij}$ representa a probabildiade do processo sair de **i** e ir
 para **j**.
@@ -134,11 +138,13 @@ pode ser modelado com cadeias de Markov. As probabilidades de transição
 entre estados podem ser descritas por uma matriz de transição
 bidimensional quadrada T, onde o elemento i,j é a probabilidade de
 transição entre o estado i e j. A probabilidade de estar em um dado
-estado no tempo t é dada por:
+estado no tempo t é dada pela Equação \ref{eq:markov_transitionhomo2}. Podemos também observar na Figura \@ref(fig:cad) um exemplo simples de uma Cadeia de markov homogênia com os estados comumente utilizados na saúde. 
 
-$X \times T^t$.
+\begin{equation}
+X \times T^t.
+\label{eq:markov_transitionhomo2}
+\end{equation}
 
-Figure \@ref(fig:cad) podemos observar um exemplo simples.
 
 ```{r cad, echo=F, position="H",  out.width="50%", fig.cap="Exemplo de cadeia de Markov aplicado à saúde. S pode ser um estado Saudável/Sucetível, I o estado doente/infectado e R, o estado absorvente da morte"}
 
@@ -153,13 +159,13 @@ Uma cadeia de Markov não-homogênea é uma extensão do conceito de cadeias
 de Markov homogêneas, na qual as probabilidades de transição entre
 estados podem variar com o tempo. Em cadeias de Markov homogêneas, essas
 probabilidades são constantes e não dependem do tempo. Já em cadeias de
-Markov não-homogêneas, elas podem mudar ao longo do tempo.
+Markov não-homogêneas, elas podem mudar ao longo do tempo \cite{ross}.
 
 Assim, seja $X(t)$ o estado de uma cadeia de Markov no tempo $t$, que
 pertence a um conjunto discreto ou contínuo de pontos no tempo (por
 exemplo, $( t = 0, 1, 2, \ldots )$ para cadeias de tempo discreto). A
 cadeia é caracterizada por um conjunto de probabilidades de transição
-que dependem do tempo, denotadas por $P_{ij}(t, t +\Delta t)$, onde:
+que dependem do tempo, denotadas por $P_{ij}(t, t +\Delta t)$ (Equação \ref{eq:markov_transition1}), onde:
 
 $P_{ij}(t, t + \Delta t)$ é a probabilidade de transição do estado $i$
 para o estado $j$ entre os instantes $t$ e $t + \Delta t$.
@@ -167,10 +173,12 @@ para o estado $j$ entre os instantes $t$ e $t + \Delta t$.
 Em termos formais, para qualquer conjunto de estados $(i, j)$ e tempos
 $(t, t + \Delta t)$, temos:
 
-$P_{ij}(t, t + \Delta t) = Pr{X(t + \Delta t) = j \mid X(t) = i}$
+\begin{equation}
+P_{ij}(t, t + \Delta t) = Pr\{X(t + \Delta t) = j \mid X(t) = i\}
+\label{eq:markov_transition1}
+\end{equation}
 
-A propriedade fundamental da cadeia de Markov, que é a falta de memória,
-ainda se mantém: a probabilidade de transição para um futuro estado
+Note que propriedade fundamental da cadeia de Markov, que é a falta de memória, ainda se mantém: a probabilidade de transição para um futuro estado
 depende apenas do estado atual, e não da história da cadeia. No entanto,
 em cadeias não-homogêneas, como as probabilidades de transição podem
 mudar com o tempo, a análise dessas cadeias pode ser mais complexa do
@@ -179,16 +187,20 @@ que no caso das cadeias homogêneas.
 Nos contexto de economia da saúde, os modelos de Markov não-homogêneos,
 ou seja aqueles com dependência do tempo do modelo
 \cite{hawkins2005cost}, também são úteis. Neses utiliza-se uma matriz de
-transição tridimensional U (um *array*, ou *tensor*). Assim como na
+transição tridimensional U (um *array*). Assim como na
 matriz bidimensional T descrita anteriormente, os índices das primeiras
 duas dimensões, i e j, representam a probabilidade de transição entre os
 estados i e j. Além disso, o índice da terceira dimensão, k, corresponde
 ao número de ciclos já executados pelo modelo, de modo que o elemento i,
 j, k da matriz U representa a probabilidade de transição entre os
 estados i e j no momento k. A probabilidade de estar em um estado
-específico no tempo t é dada por uma extensão simples da Equação 1:
+específico no tempo t (Equação \ref{eq:markov_transitionhomo} ) também pode ser dada por uma extensão simples da Equação \ref{eq:markov_transition1}
 
-$\sum_{k=1}^{t} X \times Y U_k$
+\begin{equation}
+P_{ij}(n, t) = [P(t) \times P(t+1) \times \ldots \times P(t+n-1)]_{ij}
+\label{eq:markov_transition}
+\end{equation}
+
 
 Essa abordagem pode ser muito útil ao se considerar o envelhecimento dos
 indivíduos a cada passo/ciclo. A cada ano de vida da coorte
@@ -197,34 +209,37 @@ obtida/estimadas pelas tábuas de vida demográficas.
 
 ## Processo semi-Markov
 
-Um processo semi-Markoviano é um processo a tempo contínuo. Dessa forma, se considerarmos t inteiro, ou seja, a transição da cadeia em uma unidade de tempo, $t=1,2,...$, o processo é de Markov a tempo discreto.
-
-$$
-P(T_i \le t ~| j ~ a ~seguir) = F_{i,j}
-$$
-
-Note que um processo Markoviano usual:
-
-$$F_{i,j}(t) = 
-\begin{cases} 
-0, & \text{se } t < 1 \text{ ( } n \geq 1\text{)} \\
-1, & \text{se } t \geq 1 \text{ ( } n \geq 1\text{)}
-\end{cases}$$
-
-Segundo \citeonline{ross}, um processo estocástico $\{N(t): t \geq 0 \}$
+Já um processo semi-Markoviano é um processo a tempo contínuo. Segundo \citeonline{ross}, um processo estocástico $\{N(t): t \geq 0 \}$
 que pode estar em qualquer um de N estados $(1, 2, ..., N)$ e, a cada
 vez que entrar em um estado **i**, lá permanecer por uma quantidade de
 tempo aleatória, com média $\mu_i$ e, então, ir para um estado **j** com
-probabilidade $P_{ij}$ é chamado de *processo semi-markov*.
-Diferencia-se de uma cadeia de Markov por, nesta última, o tempo em que
-passa em cada estado antes de uma transição ser fixo.
+probabilidade $P_{ij}$ é chamado de *processo semi-markov* (Equação \ref{eq:semimarkov}).
 
-A proporção de tempo que um processo permanece em um estado **i** é dado
-por:
 
-$$
+\begin{equation}
+P(T_i \le t ~| j ~ a ~seguir) = F_{i,j}
+\label{eq:semimarkov}
+\end{equation}
+
+Note que esta é uma generalização dos exemplos anteriores.  Para ilustrar esse caso particular, vemos que em cadeia de Markov homogênia a tempo discreto a $F_{i,j}$ seria dada pela equação \ref{eq:semimarkov2}
+
+\begin{equation}
+F_{i,j}(t) = 
+\begin{cases} 
+0, & \text{se } t < 1 \text{ ( } n \geq 1\text{)} \\
+1, & \text{se } t \geq 1 \text{ ( } n \geq 1\text{)}
+\end{cases}
+\label{eq:semimarkov2}
+\end{equation}
+
+Dessa forma, se considerarmos t inteiro, ou seja, a transição da cadeia em uma unidade de tempo, $t=1,2,...$, o processo é de Markov a tempo discreto. Diferencia-se de uma cadeia de Markov por, nesta última, o tempo em que
+passa em cada estado antes de uma transição ser fixo. A proporção de tempo que um processo permanece em um estado **i** é dado
+por \ref{eq:prop}.
+
+\begin{equation}
 P_i=\frac{\mu_i}{\mu_1+\mu_2+...+\mu_N}, i = 1, 2, ... , N
-$$
+\label{eq:prop}
+\end{equation}
 
 Com $\mu_i$ representando a quantidade esperada de tempo em que um
 processo permanece no estado **i** durante cada visita.
@@ -234,15 +249,23 @@ estado **i**. $X_n$ denota o estado do processo após a n-ésima
 transição. Então $\{X_n, n \geq 0\}$ é uma cadeia de Markov com
 probabildades de transição $P_{ij}, i,j = 1,2,...,N$. $\pi_i$ será a
 probabilidade estacionária para essa cadeia de Markov. Isto é, $\pi_i$
-será a única solução não-negativa para $$\sum_{i=1}^N \pi_iP_{ij}=1\\
-\pi_i=\sum_{j=1}^N \pi_jP_{ij},i=1,2,...,N 
-$$ Como o processo passa um tempo esperado $\mu_i$ no estado **i**
-sempre que visita aquele estado, $P_i$ dever ser uma média ponderada de
-$\mu_i$, em que $\pi_i$ é poderado proporcionalmente a $\mu_i$:
+será a única solução não-negativa para a equação \ref{eq:pi}:
 
-$$
-P_i=\frac{\pi_i\mu_i}{\sum_{j=1}^N \pi_jP_{ij}}, i=1,2,...,N
-$$ e $\pi_i$ é a solução da equação anterior e a probabilidade $P_i$
+\begin{equation*}
+\sum_{i=1}^N \pi_iP_{ij} =1 ~, ~ i=1,2,...,N 
+\label{eq:pi}
+\end{equation*}
+
+Como o processo passa um tempo esperado $\mu_i$ no estado **i**
+sempre que visita aquele estado, $P_i$ dever ser uma média ponderada (equação \ref{eq:prop2}) de $\mu_i$, em que $\pi_i$ é poderado proporcionalmente a $\mu_i$ \cite{ross}.
+
+\begin{equation}
+P_i=\frac{\pi_i\mu_i}{\sum_{j=1}^N \pi_jP_{ij}},  i=1,2,...,N
+\label{eq:prop2}
+\end{equation}
+
+
+onde $\pi_i$  é a solução da equação anterior e a probabilidade $P_i$
 para um processo Semi-Markov
 
 De forma intuitiva, podemos o conceito de processos semi-Markov da
