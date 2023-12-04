@@ -517,11 +517,11 @@ A **razão incremental de custo-benefício** (**ICER**) é o custo do incremento
 ggplot()+
      geom_vline(xintercept=0)+
     geom_hline(yintercept=0)+
-    geom_abline(slope = 85,intercept=0, linetype="dotted")+
+    geom_abline(slope = 20,intercept=0, linetype="dotted")+
      geom_label(aes(x=4.7,y=-10,label="trat"), fill="#b2df8a", size=6)+
     geom_label(aes(x=0,y=0,label="sem trat"),fill="#a6cee3", size=6)+
-     scale_x_continuous(limits=c(-6,6), breaks=seq(-6,6,1)) +
-     scale_y_continuous(limits=c(-500,500),breaks=seq(-500,500,100))+
+     scale_x_continuous(limits=c(-5,5), breaks=seq(-6,6,1)) +
+     scale_y_continuous(limits=c(-100,100),breaks=seq(-500,500,100))+
   labs(x="Diferença de QALY",
        y="Diferença de Custo")+
   theme_bw(base_size = 12)
