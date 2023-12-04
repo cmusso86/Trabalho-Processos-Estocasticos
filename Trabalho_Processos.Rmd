@@ -136,6 +136,7 @@ knitr::include_graphics("img/cadeia1.png")
 ```
 
 \newpage
+
 ## Cadeias de Markov homogêneas
 
 Uma cadeia de Markov não-homogênea é uma extensão do conceito de cadeias
@@ -186,15 +187,29 @@ obtida/estimadas pelas tábuas de vida demográficas.
 
 ## Processo semi-Markov
 
-Um processo semi-Markoviano é um processo é um processo a tempo contínuo. Dessa forma se considerar t interio, ou seja a cadeia mudar em uma unidade de tempo, t=1,2, o processo é de Markov a tempo discreto
+Um processo semi-Markoviano é um processo é um processo a tempo
+contínuo. Dessa forma se considerar t interio, ou seja a cadeia mudar em
+uma unidade de tempo, t=1,2, o processo é de Markov a tempo discreto
 
-Um processo estocástico $\{N(t): t \geq 0 \}$ que pode estar em qualquer
-um de N estados $(1, 2, ..., N)$ e, a cada vez que entrar em um estado
-**i**, lá permanecer por uma quantidade de tempo aleatória, com média
-$\mu_i$ e, então, ir para um estado **j** com probabilidade $P_{ij}$ é
-chamado de *processo semi-markov*. Diferencia-se de uma cadeia de Markov
-por, nesta última, o tempo em que um processo passa em cada estado antes
-de uma transição ser fixo.
+$$
+P(T_i \le t ~| j ~ a ~seguir) = F_{i,j}
+$$
+
+Note que um processo Markoviano usual:
+
+$$F_{i,j}(t) = 
+\begin{cases} 
+0, & \text{se } t < 1 \text{ ( } n \geq 1\text{)} \\
+1, & \text{se } t \geq 1 \text{ ( } n \geq 1\text{)}
+\end{cases}$$
+
+Segundo \citeonline{ross}, um processo estocástico $\{N(t): t \geq 0 \}$
+que pode estar em qualquer um de N estados $(1, 2, ..., N)$ e, a cada
+vez que entrar em um estado **i**, lá permanecer por uma quantidade de
+tempo aleatória, com média $\mu_i$ e, então, ir para um estado **j** com
+probabilidade $P_{ij}$ é chamado de *processo semi-markov*.
+Diferencia-se de uma cadeia de Markov por, nesta última, o tempo em que
+passa em cada estado antes de uma transição ser fixo.
 
 A proporção de tempo que um processo permanece em um estado **i** é dado
 por:
@@ -219,9 +234,8 @@ $\mu_i$, em que $\pi_i$ é poderado proporcionalmente a $\mu_i$:
 
 $$
 P_i=\frac{\pi_i\mu_i}{\sum_{j=1}^N \pi_jP_{ij}}, i=1,2,...,N
-$$ e $\pi_i$ é a solução da equação anterior.
-
-A probabilidade $P_i$ para um processo Semi-Markov
+$$ e $\pi_i$ é a solução da equação anterior e a probabilidade $P_i$
+para um processo Semi-Markov
 
 De forma intuitiva, podemos o conceito de processos semi-Markov da
 seguinte maneira: Imagine um processo que pode estar em um de três
@@ -239,8 +253,8 @@ dividida pela soma das médias de todos os estados.
 Em um processo semi-Markov, cada vez que o processo entra em um estado,
 ele permanece lá por um tempo aleatório com média $\mu_i$, e depois faz
 a transição para outro estado com uma probabilidade definida. Se o tempo
-em cada estado for  um valor fixo, o processo semi-Markov se torna
-uma cadeia de Markov. A proporção de tempo em cada estado em um processo
+em cada estado for um valor fixo=1, o processo semi-Markov se torna uma
+cadeia de Markov. A proporção de tempo em cada estado em um processo
 semi-Markov também é uma média ponderada, mas levando em conta as
 probabilidades de transição entre os estados.
 
@@ -249,7 +263,7 @@ modelos de Markov, as transições futuras de pacientes são determinadas
 sem considerar a história clínica anterior. Embora útil, esse método
 pode ser limitado para doenças complexas ou tecnologias de tratamento
 avançadas, onde o histórico de saúde é crucial. Para superar isso, os
-modelos semi-Markov foram desenvolvidos. Eles permitem incorporar a
+modelos semi-Markov podem ser aplicados. Eles permitem incorporar a
 'memória' de eventos anteriores, como a duração desde um tratamento de
 câncer ou a localização de uma recorrência. Essa abordagem resulta em
 modelos mais precisos e detalhados, capazes de diferenciar riscos e
@@ -257,7 +271,7 @@ qualidade de vida com base em históricos específicos de pacientes.
 
 Na aplicação que apresentaremos, essa situação é apresentada como tempo
 de estado. No pacote, o método foi implementado com o método de
-"estado-túnel} \cite{hawkins2005cost}. Um estado-túnel é um estado que
+"estado-túnel" \cite{hawkins2005cost}. Um estado-túnel é um estado que
 pode ser ocupado por apenas 1 ciclo, ele representa ao mesmo tempo o
 estado de saúde em que uma pessoa está e o número de ciclos previamente
 gastos neste estado. Um estado A com dependência de tempo de estado é
@@ -304,7 +318,8 @@ morte diretamente, ele aumenta a chance de morte por suicídio de modo
 que a expectativa de vida de uma pessoas com TAB chega a ser de 10 anos
 a menos que a população geral.
 
-Os as probabilidades de transição foram estimados a partir da prevalência da doença na população, taxas de incidência e risco. 
+Os as probabilidades de transição foram estimados a partir da
+prevalência da doença na população, taxas de incidência e risco.
 
 ```{r echo=F}
 library(heemod)
@@ -375,10 +390,11 @@ plot(mat_base)
 plot(mat_med)
 ```
 
-
 # Resultados e Discussão
 
-Os parâmetros da cadeia de transição foram obtidos como descrito anteriormente, assim como o custo dos estados. Seguindo as intruções do pacote, temos: 
+Os parâmetros da cadeia de transição foram obtidos como descrito
+anteriormente, assim como o custo dos estados. Seguindo as intruções do
+pacote, temos:
 
 ```{r}
 library(heemod)
@@ -407,7 +423,7 @@ par_mod <- define_parameters(
 
 ```
 
-Em seguida, defini-se as matrizes, estados e estratégias. 
+Em seguida, defini-se as matrizes, estados e estratégias.
 
 ```{r}
 # ------------------------------------------------------------------------
@@ -418,7 +434,7 @@ mat_base <- define_transition(
 
   C,     prevalencia, 0 ,               p_death_all,
   0,     C,           p_disease_base,   p_death_all, 
-  0,    p_cured,        C           ,   p_death_symp,
+  0,    p_cured_base,        C           ,   p_death_symp,
   0,    0,             0,                1)
 
 mat_med <- define_transition(
@@ -426,7 +442,7 @@ mat_med <- define_transition(
 
   C,     prevalencia, 0 ,               p_death_all,
   0,     C,           p_disease_med,   p_death_all, 
-  0,    p_cured,        C           ,   p_death_symp,
+  0,    p_cured_med,        C           ,   p_death_symp,
   0,    0,             0,                1)
 
 
@@ -474,14 +490,14 @@ state_death <- define_state(
 # ------------------------------------------------------------------------
 strat_base <- define_strategy(
   transition = mat_base,
-
+  geral = state_geral,
   pre = state_pre,
   symp = state_symp,
   death = state_death)
 
 strat_med <- define_strategy(
   transition = mat_med,
-
+  geral = state_geral,
   pre = state_pre,
   symp = state_symp,
   death = state_death)
@@ -489,7 +505,7 @@ strat_med <- define_strategy(
 
 ```
 
-Finalmente, ajusta-se o modelo, definindo-se a quantidade de ciclos. 
+Finalmente, ajusta-se o modelo, definindo-se a quantidade de ciclos.
 
 ```{r}
 res_mod <- run_model(

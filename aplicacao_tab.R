@@ -72,7 +72,7 @@ mat_med <- define_transition(
 
 
 state_geral <- define_state(
-  cost_treat = 0
+  cost_treat = 0,
   cost_hospit = 0, # good health => no hospital expenses
   cost_total = 0,
   qaly = 1)
