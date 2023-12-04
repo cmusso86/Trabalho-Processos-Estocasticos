@@ -140,7 +140,7 @@ knitr::include_graphics("img/cadeia1.png")
 
 \newpage
 
-## Cadeias de Markov homogêneas
+## Cadeias de Markov não-homogêneas
 
 Uma cadeia de Markov não-homogênea é uma extensão do conceito de cadeias
 de Markov homogêneas, na qual as probabilidades de transição entre
@@ -190,9 +190,7 @@ obtida/estimadas pelas tábuas de vida demográficas.
 
 ## Processo semi-Markov
 
-Um processo semi-Markoviano é um processo é um processo a tempo
-contínuo. Dessa forma se considerar t interio, ou seja a cadeia mudar em
-uma unidade de tempo, t=1,2, o processo é de Markov a tempo discreto
+Um processo semi-Markoviano é um processo a tempo contínuo. Dessa forma, se considerarmos t inteiro, ou seja, a transição da cadeia em uma unidade de tempo, $t=1,2,...$, o processo é de Markov a tempo discreto.
 
 $$
 P(T_i \le t ~| j ~ a ~seguir) = F_{i,j}
