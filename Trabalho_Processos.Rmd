@@ -1,6 +1,6 @@
 ---
-titulo: "Cadeias de Markov e Economia da saúde"
-subtitulo: "Uma aplicação utilizando o pacote heemod"
+titulo: "Cadeias de Markov e Economia da Saúde"
+subtitulo: "Uma aplicação do pacote heemod"
 aluno1:  "Carolina Musso 18/0047850"
 aluno2: "Henrique Oliveira Dumay 19/0121475"
 orientador: "Cira Etheowalda Guevara Otiniano"
@@ -9,6 +9,9 @@ referencias: auxiliar/referencias.bib
 output: 
   bookdown::pdf_document2:
     template: auxiliar/template.tex
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -33,114 +36,195 @@ pacman::p_load(tidyverse, dplyr, rio, papeR, patchwork,
 
 \newpage
 
-# Resumo
 
+\begin{abstract}
+
+A avaliação econômica em saúde é fundamental para orientar as decisões de alocação de recursos em sistemas de saúde, particularmente em ambientes com restrições orçamentárias, como é o caso do Sistema Único de Saúde (SUS) no Brasil. Nesse contexto, os modelos de Markov emergem como ferramentas valiosas, pois permitem representar os diferentes estados de saúde e suas respectivas transições, incluindo a incorporação de custos associados a cada estado, o que facilita significativamente a análise de custo-efetividade de tratamentos. Este estudo aplica um modelo de Markov, disponível no pacote heemod na linguagem R, para avaliar estratégias de tratamento do Transtorno Afetivo Bipolar (TAB). O pacote heemod oferece suporte tanto para modelos de Markov homogêneos e não-homogêneos, quanto para modelos semi-Markov. No caso específico deste trabalho, optamos por utilizar cadeias de Markov homogêneas, ressaltando, contudo, o potencial do pacote para abordar casos mais complexos. O foco é avaliar, de maneira simplificada, a custo-efetividade de estratégias de tratamento para o TAB, contrastando a abordagem de não tratamento com a de tratamento de primeira linha. O modelo proposto inclui quatro estados - População Geral, Pré-Sintomático, Sintomático e Morte - capturando assim a dinâmica do TAB e seu impacto indireto, mas significativo, na expectativa de vida. Os parâmetros modelados são baseados em evidências da literatura. Os resultados indicam que o tratamento medicamentoso é mais custo-efetivo, proporcionando um ganho de anos de vida para os pacientes e redução de custos totais ao longo de 40 ciclos (40 anos). A aplicação desses modelos em psiquiatria mostra-se promissora, indicando um caminho eficiente para a análise econômica em saúde mental.
+\end{abstract}
+
+\newpage
 
 # Introdução e Objetivos
 
+A avaliação econômica em saúde, cada vez mais fundamental na tomada de
+decisões dos sistemas de saúde, é utilizada para determinar quais
+intervenções devem ser financiadas com recursos limitados. Essencial em
+decisões sobre cobertura ou reembolso de novos medicamentos, esta
+abordagem foi pioneira na Austrália e em Ontário, Canadá. Atualmente é
+utilizada extensivamente no Reino Unido, onde o Instituto Nacional para
+Excelência em Saúde e Cuidados Clínicos (NICE) expande seu uso para
+dispositivos médicos, tecnologias de diagnóstico e procedimentos
+cirúrgicos \cite{briggs2006decision}.
 
-A avaliação econômica em saúde, cada vez mais fundamental na tomada de decisões dos sistemas de saúde, é utilizada para determinar quais intervenções devem ser financiadas com recursos limitados. Essencial em decisões sobre cobertura ou reembolso de novos medicamentos, esta abordagem foi pioneira na Austrália e em Ontário, Canadá. Atualmente é utilizada extensivamente no Reino Unido, onde o Instituto Nacional para Excelência em Saúde e Cuidados Clínicos (NICE) expande seu uso para dispositivos médicos, tecnologias de diagnóstico e procedimentos cirúrgicos \cite{briggs2006decision}.
+No Brasil esse é um campo em crescimento, especialmente em vista da
+necessidade de otimizar os recursos no Sistema Único de Saúde (SUS). Com
+um sistema de saúde pública que enfrenta desafios de financiamento e
+desigualdades regionais, a avaliação econômica torna-se crucial para
+garantir a eficiência na alocação de recursos e no acesso equitativo a
+tratamentos e tecnologias. Ainda há desafios, como a necessidade de
+maior capacitação técnica e integração de dados de saúde, mas a
+avaliação econômica está se tornando uma ferramenta cada vez mais
+importante na formulação de políticas de saúde no país
+\cite{scielo2009}.
 
-No Brasil esse é um campo em crescimento, especialmente em vista da necessidade de otimizar os recursos no Sistema Único de Saúde (SUS). Com um sistema de saúde pública que enfrenta desafios de financiamento e desigualdades regionais, a avaliação econômica torna-se crucial para garantir a eficiência na alocação de recursos e no acesso equitativo a tratamentos e tecnologias. Ainda há desafios, como a necessidade de maior capacitação técnica e integração de dados de saúde, mas a avaliação econômica está se tornando uma ferramenta cada vez mais importante na formulação de políticas de saúde no país \cite{scielo2009}.
+Nos estudos de avaliação econômica em saúde, custos e resultados são
+atribuídos a diferentes estados de saúde (como saudável, doente ou
+morto) para avaliar a eficiência de várias estratégias de saúde. Esses
+custos podem incluir despesas médicas ou de medicamentos, enquanto os
+resultados se referem a anos de vida ou qualidade de vida. Modelos de
+Markov são utilizados para representar esses estados de saúde e as
+probabilidades de transição entre eles ao longo do tempo. Embora os
+modelos de Markov sejam robustos, a programação de modelos
+personalizados pode ser complexa. Para superar isso, o pacote heemod foi
+desenvolvido na linguagem R, facilitando a criação e análise de modelos
+de Markov em avaliações econômicas de saúde, tornando o processo mais
+acessível e eficiente \cite{heemodpaper, heemodman}
 
-Nos estudos de avaliação econômica em saúde, custos e resultados são atribuídos a diferentes estados de saúde (como saudável, doente ou morto) para avaliar a eficiência de várias estratégias de saúde. Esses custos podem incluir despesas médicas ou de medicamentos, enquanto os resultados se referem a anos de vida ou qualidade de vida. Modelos de Markov são utilizados para representar esses estados de saúde e as probabilidades de transição entre eles ao longo do tempo. Embora os modelos de Markov sejam robustos, a programação de modelos personalizados pode ser complexa. Para superar isso, o pacote heemod foi desenvolvido na linguagem R, facilitando a criação e análise de modelos de Markov em avaliações econômicas de saúde, tornando o processo mais acessível e eficiente \cite{heemodpaper, heemodman}
-
-O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica, que afeta entre 1 e 4% da população mundial \cite{scaini}. Caracteriza-se por uma mudança sustentada de humor, com alternância entre polos, que recebem os nomes de mania e depressão, ou leva a estados mistos, normalmente associados a grande prejuízo funcional. A mania é caracterizada como um estado humor elevado, expansivo ou irritado com duração maior que uma semana associado a outros sintomas característicos e é o principal marcador clínico diagnóstico do TAB \cite{dsm}. Para um grupo de pessoas, a doença leva a um quadro crônico, persistente e com curso deteriorante. Episódios recorrentes influenciam o desfecho clínico e aumentam a vulnerabilidade individual a novos episódios, além de reduzir a resposta ao tratamento \cite{gana}.
-
-
-
+O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica,
+que afeta entre 1 e 4% da população mundial \cite{scaini}.
+Caracteriza-se por uma mudança sustentada de humor, com alternância
+entre polos, que recebem os nomes de mania e depressão, ou leva a
+estados mistos, normalmente associados a grande prejuízo funcional. A
+mania é caracterizada como um estado humor elevado, expansivo ou
+irritado com duração maior que uma semana associado a outros sintomas
+característicos e é o principal marcador clínico diagnóstico do TAB
+\cite{dsm}. Para um grupo de pessoas, a doença leva a um quadro crônico,
+persistente e com curso deteriorante. Episódios recorrentes influenciam
+o desfecho clínico e aumentam a vulnerabilidade individual a novos
+episódios, além de reduzir a resposta ao tratamento \cite{gana}.
 
 O tratamento consiste em ...
 
-
-
-O objetivo desse trabalho foi então avaliar a custo-efetividade do tratamento de primeira classe ou nenhum considerando a internacao... (elaborar melhor) utilizando o pacote heemod
+O objetivo desse trabalho foi então avaliar a custo-efetividade do
+tratamento de primeira classe ou nenhum considerando a internacao...
+(elaborar melhor) utilizando o pacote heemod
 
 # Metodologia
 
-## Processo Semi-Markov 
+## Cadeias de Markov homogêneas 
+
+Segundo apresentado em \citeonline{ross} uma cadeia de Markov
+tradicional é um processo estocástico em que a distribuição condicional
+para qualquer estado futuro $X_{n+1}$, dados os estados passados
+$X_0, X_1,...,X_{n-1}$ e o estado presente $X_n$, é idependente dos
+estados passados e depende somente do estado presente . O processo
+assume um número finito de possíveis valores $\{X_n, n = 0, 1, 2,...\}$
+e, se $X_n = i$, considera-se que o processo está no estado **i** no
+tempo **n**. Assume-se que, quando o processo está no estado **i**,
+existe uma probabilidade $P_{ij}$ de ir para o estado **j** em seguida.
+Isto é:
+
+$$P\{X(n+1)=j | X_n = i_n, X_{n-1}=i_{n-1}, ..., X_1=i_1, X_0=i_0\}=P_{ij} $$ 
+para todos os estados $i_0,i_1,...,i_{n},j$ e para todo $n \geq 0$. 
+valor $P_{ij}$ representa a probabildiade do processo sair de **i** e ir
+para **j**.
+
+No contexto de análise econômica em saúde, podemos representar o estado
+de saúde como estados e as mudanças de saúde ao longo do tempo como
+probabilidades de transição entre estados. Dessa forma, esse processo
+pode ser modelado com cadeias de Markov. As probabilidades de transição
+entre estados podem ser descritas por uma matriz de transição
+bidimensional quadrada T, onde o elemento i,j é a probabilidade de
+transição entre o estado i e j. A probabilidade de estar em um dado
+estado no tempo t é dada por:
+
+$X \times T^t$
+
+## Cadeias de Markov homogêneas 
+
+Uma cadeia de Markov não-homogênea é uma extensão do conceito de cadeias de Markov homogêneas, na qual as probabilidades de transição entre estados podem variar com o tempo. Em cadeias de Markov homogêneas, essas probabilidades são constantes e não dependem do tempo. Já em cadeias de Markov não-homogêneas, elas podem mudar ao longo do tempo. 
+
+Assim, seja $X(t)$  o estado de uma cadeia de Markov no tempo $t$, que pertence a um conjunto discreto ou contínuo de pontos no tempo (por exemplo, $( t = 0, 1, 2, \ldots )$ para cadeias de tempo
+discreto). A cadeia é caracterizada por um conjunto de probabilidades de transição que dependem do tempo, denotadas por $P_{ij}(t, t +\Delta t)$, onde:
+
+$P_{ij}(t, t + \Delta t)$  é a probabilidade de transição do
+estado $i$ para o estado $j$ entre os instantes $t$ e
+$t + \Delta t$.
 
 
+Em termos formais, para qualquer conjunto de estados $(i, j)$ e
+tempos $(t, t + \Delta t)$, temos:
 
-Segundo apresentado em \citeonline{ross} uma cadeia de Markov tradicional é um processo estocástico em que a distribuição condicional para qualquer estado futuro $X_{n+1}$, dados os estados passados $X_0, X_1,...,X_{n-1}$ e o estado presente $X_n$, é idependente dos estados passados e depende somente do estado presente . O processo assume um número finito de possíveis valores $\{X_n, n = 0, 1, 2,...\}$ e, se $X_n = i$, considera-se que o processo está no estado **i** no tempo **n**. Assume-se que, quando o processo está no estado **i**, existe uma probabilidade $P_{ij}$ de ir para o estado **j** em seguida. Isto é:
+$P_{ij}(t, t + \Delta t) = Pr{X(t + \Delta t) = j \mid X(t) = i}$
 
-$$
-P\{X(n+1)=j | X_n = i_n, X_{n-1}=i_{n-1}, ..., X_1=i_1, X_0=i_0\}=P_{ij}
-$$
-para todos os estados $i_0,i_1,...,i_{n},j$ e para todo $n \geq 0$. O valor $P_{ij}$ representa a probabildiade do processo sair de **i** e ir para **j**. 
+A propriedade fundamental da cadeia de Markov, que é a falta de memória, ainda se mantém: a probabilidade de transição para um futuro estado depende apenas do estado atual, e não da história da cadeia. No entanto, em cadeias não-homogêneas, como as probabilidades de transição podem mudar com o tempo, a análise dessas cadeias pode ser mais complexa do que no caso das cadeias homogêneas.
 
+Nos contexto de economia da saúde, os modelos de Markov não-homogêneos, ou seja aqueles com dependência do tempo do modelo \cite{hawkins2005cost}, também são úteis. Neses utiliza-se uma matriz de transição tridimensional U (um *array*, ou *tensor*). Assim como na matriz bidimensional T descrita anteriormente, os índices das primeiras duas dimensões, i e j, representam a probabilidade de transição entre os estados i e j. Além disso, o índice da terceira dimensão, k, corresponde ao número de ciclos já executados pelo modelo, de modo que o elemento i, j, k da matriz U representa a probabilidade de transição entre os estados i e j no momento k. A probabilidade de estar em um estado específico no tempo t é dada por uma extensão simples da Equação 1:
 
-Um processo estocástico $\{N(t): t \geq 0 \}$ que pode estar em qualquer um de N estados $(1, 2, ..., N)$ e, a cada vez que entrar em um estado **i**, lá permanecer por uma quantidade de tempo aleatória, com média $\mu_i$ e, então, ir para um estado **j** com probabilidade $P_{ij}$ é chamado de *processo semi-markov*. Diferencia-se de uma cadeia de Markov por, nesta última, o tempo em que um processo passa em cada estado antes de uma transição ser o mesmo. 
+$\sum_{k=1}^{t} X \times Y U_k$
+
+Essa abordagem pode ser muito útil ao se considerar o envelhecimento dos indivíduos a cada passo/ciclo. A cada ano de vida da coorte observada/simulada them probabilidade de morte aumentada, que pode ser obtida/estimadas pelas tábuas de vida demográficas. 
+
+## Processo semi-Markov
+
+Um processo estocástico $\{N(t): t \geq 0 \}$ que pode estar em qualquer um de N estados $(1, 2, ..., N)$ e, a cada vez que entrar em um estado **i**, lá permanecer por uma quantidade de tempo aleatória, com média $\mu_i$ e, então, ir para um estado **j** com probabilidade $P_{ij}$ é chamado de *processo semi-markov*. Diferencia-se de uma cadeia de Markov por, nesta última, o tempo em que um processo passa em cada estado antes de uma transição ter distribuição constante.
 
 A proporção de tempo que um processo permanece em um estado **i** é dado por:
 
 $$
 P_i=\frac{\mu_i}{\mu_1+\mu_2+...+\mu_N}, i = 1, 2, ... , N
-$$
-Com $\mu_i$ representando a quantidade esperada de tempo em que um processo permanece no estado **i** durante cada visita. 
+$$ 
 
-Considera-se $\pi_i$ a proporção de transições que levam o processo ao estado **i**. $X_n$ denota o estado do processo após a n-ésima transição. Então $\{X_n, n \geq 0\}$ é uma cadeia de Markov com probabildades de transição $P_{ij}, i,j = 1,2,...,N$. $\pi_i$ será a probabilidade estacionária para essa cadeia de Markov. Isto é, $\pi_i$ será a única solução não-negativa para
-$$
-\sum_{i=1}^N \pi_iP_{ij}=1\\
+Com $\mu_i$ representando a quantidade esperada de tempo em que um
+processo permanece no estado **i** durante cada visita.
+
+Considera-se $\pi_i$ a proporção de transições que levam o processo ao estado **i**. $X_n$ denota o estado do processo após a n-ésima
+transição. Então $\{X_n, n \geq 0\}$ é uma cadeia de Markov com
+probabildades de transição $P_{ij}, i,j = 1,2,...,N$. $\pi_i$ será a probabilidade estacionária para essa cadeia de Markov. Isto é, $\pi_i$ será a única solução não-negativa para $$\sum_{i=1}^N \pi_iP_{ij}=1\\
 \pi_i=\sum_{j=1}^N \pi_jP_{ij},i=1,2,...,N 
-$$
-Como o processo passa um tempo esperado $\mu_i$ no estado **i** sempre que visita aquele estado, $P_i$ dever ser uma média ponderada de $\mu_i$, em que $\pi_i$ é poderado proporcionalmente a $\mu_i$:
+$$ Como o processo passa um tempo esperado $\mu_i$ no estado **i**
+sempre que visita aquele estado, $P_i$ dever ser uma média ponderada de $\mu_i$, em que $\pi_i$ é poderado proporcionalmente a $\mu_i$:
 
 $$
 P_i=\frac{\pi_i\mu_i}{\sum_{j=1}^N \pi_jP_{ij}}, i=1,2,...,N
+$$ e $\pi_i$ é a solução da equação anterior.
+
+A probabilidade $P_i$ para um processo Semi-Markov
+
+De forma intuitiva, podemos o conceito de processos semi-Markov da
+seguinte maneira: Imagine um processo que pode estar em um de três
+estados: 1, 2 ou 3. Ele começa no estado 1, onde permanece por um tempo aleatório com média $\mu_1$, depois passa para o estado 2 (tempo médio $\mu_2$), e depois para o estado 3 (tempo médio $\mu_3$). Após isso, retorna ao estado 1 e o ciclo se repete. A questão é: qual a proporção do tempo que o processo passa em cada estado?
+
+Para calcular isso, usamos um processo de renovação-recompensa. Aqui, a "recompensa" é o tempo gasto em cada estado por ciclo. A proporção do tempo em cada estado (Pi) é dada pela média de tempo no estado ($\mu_i$) dividida pela soma das médias de todos os estados.
+
+Em um processo semi-Markov, cada vez que o processo entra em um estado, ele permanece lá por um tempo aleatório com média $\mu_i$, e depois faz a transição para outro estado com uma probabilidade definida. Se o tempo em cada tover distribuição constante, o processo semi-Markov se torna uma cadeia de Markov. A proporção de tempo em cada estado em um processo semi-Markov também é uma média ponderada, mas levando em conta as probabilidades de transição entre os estados.
+
+Aplicando essa teoria no contexto de Economia da Saúde temos que nos modelos de Markov, as transições futuras de pacientes são determinadas sem considerar a história clínica anterior. Embora útil, esse método pode ser limitado para doenças complexas ou tecnologias de tratamento avançadas, onde o histórico de saúde é crucial. Para superar isso, os modelos semi-Markov foram desenvolvidos. Eles permitem incorporar a 'memória' de eventos anteriores, como a duração desde um tratamento de câncer ou a localização de uma recorrência. Essa abordagem resulta em
+modelos mais precisos e detalhados, capazes de diferenciar riscos e
+qualidade de vida com base em históricos específicos de pacientes.
+
+
+Na aplicação que apresentaremos, essa situação é apresentada como tempo de estado. No pacote, o método foi implementado com o método de "estado-túnel} \cite{hawkins2005cost}. Um estado-túnel é um estado que pode ser ocupado por apenas 1 ciclo, ele representa ao mesmo tempo o estado de saúde em que uma pessoa está e o número de ciclos previamente gastos neste estado. Um estado A com dependência de tempo de estado é expandido em $(t)$ estados-túnel $(A_1, A_2, \ldots, A_t)$ (onde $t$ é o número total de ciclos). Por exemplo, considere a seguinte matriz de transição:
+
+
 $$
-e $\pi_i$ é a solução da equação anterior.
+\begin{bmatrix}
+P(A \to A) = f(s) & P(A \to B) = C \\ P(B \to A) & P(B \to B) 
+\end{bmatrix}
+$$
 
 
-A probabilidade $P_i$ para um processo Semi-Markov 
+Onde \( P(A \to B) \) é a probabilidade de transição entre o estado A e B, \( s \) o número de ciclos gastos no estado A, \( f \) uma função arbitrária que retorna uma probabilidade de transição, e \( C \) o complemento de probabilidade (1 menos a soma das probabilidades em uma linha dada). \( P(B \to A) \) e \( P(B \to B) \) são probabilidades arbitrárias que não dependem do tempo de estado.
 
-De forma intuitiva, podemos o conceito de processos semi-Markov da seguinte maneira: Imagine um processo que pode estar em um de três estados: 1, 2 ou 3. Ele começa no estado 1, onde permanece por um tempo aleatório com média $\mu_1$, depois passa para o estado 2 (tempo médio $\mu_2$), e depois para o estado 3 (tempo médio $\mu_3$). Após isso, retorna ao estado 1 e o ciclo se repete. A questão é: qual a proporção do tempo que o processo passa em cada estado?
-
-Para calcular isso, usamos um processo de renovação-recompensa. Aqui, a "recompensa" é o tempo gasto em cada estado por ciclo. A proporção do tempo em cada estado (Pi) é dada pela média de tempo no estado ($\mu_i$) dividida pela soma das médias de todos os estados. 
-
-Em um processo semi-Markov, cada vez que o processo entra em um estado, ele permanece lá por um tempo aleatório com média $\mu_i$, e depois faz a transição para outro estado com uma probabilidade definida. Se o tempo em cada estado for sempre 1, o processo semi-Markov se torna uma cadeia de Markov. A proporção de tempo em cada estado em um processo semi-Markov também é uma média ponderada, mas levando em conta as probabilidades de transição entre os estados.
-
-Aplicando essa teoria no contexto de Economia da Saúde temos que nos modelos de Markov, as transições futuras de pacientes são determinadas sem considerar a história clínica anterior. Embora útil, esse método pode ser limitado para doenças complexas ou tecnologias de tratamento avançadas, onde o histórico de saúde é crucial. Para superar isso, os modelos semi-Markov foram desenvolvidos. Eles permitem incorporar a 'memória' de eventos anteriores, como a duração desde um tratamento de câncer ou a localização de uma recorrência. Essa abordagem resulta em modelos mais precisos e detalhados, capazes de diferenciar riscos e qualidade de vida com base em históricos específicos de pacientes.
-
-Nos modelos semi-Markov, matrizes de transição multidimensionais são usadas para capturar a dependência temporal, permitindo que o modelo reflita mais precisamente como o estado de saúde de um paciente muda ao longo do tempo e em resposta a diferentes tratamentos. Esse nível de detalhamento é particularmente útil para doenças com progressão complexa ou tratamentos que têm efeitos variáveis ao longo do tempo, tornando os modelos semi-Markov uma ferramenta valiosa em estudos de custo-efetividade e na tomada de decisões em saúde.
-
+Assim, nos modelos semi-Markov, matrizes de transição multidimensionais são usadas para capturar a dependência temporal, permitindo que o modelo reflita mais precisamente como o estado de saúde de um paciente muda ao longo do tempo e em resposta a diferentes tratamentos. Esse nível de detalhamento é particularmente útil para doenças com progressão complexa ou tratamentos que têm efeitos variáveis ao longo do tempo, tornando os modelos semi-Markov uma ferramenta valiosa em estudos de custo-efetividade e na tomada de decisões em saúde.
 
 ## Descrição da questão
 
-Será modelado o transtorno afetivo bipolar. 
+Será modelado o transtorno afetivo bipolar segundo uma cadeia de Markov Homogênia. Comentaremos sobre a possibilidade de expansão para modelos semi-Markov. Nesse modelo consideraremos duas **estratégias**: 
 
-Estratégias comparadas
--------------------------
-Consideraremos duas estratégias:
 - Não tratamento
-- Tratamento de primeira linha conforme as diretrizes CANMAT and ISBD Guidelines
-on the Management of Bipolar Disorder.
 
-Estados:
-------------------------
-Estado assintomático
-Sintomático
-Internação
+- Tratamento de primeira linha conforme as diretrizes CANMAT and ISBD Guidelines on the Management of Bipolar Disorder.
 
-Parâmetros do modelo:
-------------------------
+Os estados do modelo são  quatro: População Geral,Pré-Sintomático (ou com sintomas controlados), Sintomático e Morte. Apesar de o TAB não levar à morte diretamente, ele aumenta a chance de morte por suicídio de modo que a expectativa de vida de uma pessoas com TAB chega a ser de 10 anos a menos que a população geral. 
 
+Os parâmetros do modelo foram estimados a partir da prevalência da doença na população 
 
-# Resultados
-
-
-# Discussão
-
+# Resultados e Discussão
 
 # Conclusão
-
-
-
 
 # Apêndice
 
 ```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
 ```
-
-
-
