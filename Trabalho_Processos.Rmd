@@ -1,6 +1,6 @@
 ---
 titulo: "Cadeias de Markov e Economia da Saúde"
-subtitulo: "Uma aplicação do pacote heemod"
+subtitulo: "Uma aplicação do pacote heemod à modelagem do transtorno afetivo bipolar"
 aluno1:  "Carolina Musso 18/0047850"
 aluno2: "Henrique Oliveira Dumay 19/0121475"
 orientador: "Cira Etheowalda Guevara Otiniano"
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = FALSE,
 pacman::p_load(tidyverse, dplyr, rio, papeR, patchwork, 
                kableExtra, pROC, ExhaustiveSearch, scales,
                sjPlot, sjmisc, performance,lmtest, stringr,
-               heemod, patchwork)
+               heemod, patchwork, ggplot2)
 
 
 
@@ -50,7 +50,7 @@ A avaliação econômica em saúde, cada vez mais fundamental na tomada de
 decisões dos sistemas de saúde, é utilizada para determinar quais
 intervenções devem ser financiadas com recursos limitados. Essencial em
 decisões sobre cobertura ou reembolso de novos medicamentos, esta
-abordagem foi pioneira na Austrália e em Ontário, Canadá. Atualmente é
+abordagem foi pioneira na Austrália e no Canadá. Atualmente é
 utilizada extensivamente no Reino Unido, onde o Instituto Nacional para
 Excelência em Saúde e Cuidados Clínicos (NICE) expande seu uso para
 dispositivos médicos, tecnologias de diagnóstico e procedimentos
@@ -75,10 +75,17 @@ resultados se referem a anos de vida ou qualidade de vida. Modelos de
 Markov são utilizados para representar esses estados de saúde e as
 probabilidades de transição entre eles ao longo do tempo. Embora os
 modelos de Markov sejam robustos, a programação de modelos
-personalizados pode ser complexa. Para superar isso, o pacote heemod foi
+personalizados pode ser complexa. Para superar isso, o pacote heemod (Markov Models for Health Economic Evaluations)foi
 desenvolvido na linguagem R, facilitando a criação e análise de modelos
 de Markov em avaliações econômicas de saúde, tornando o processo mais
-acessível e eficiente \cite{heemodpaper, heemodman}
+acessível e eficiente \cite{heemodpaper, heemodman}.
+
+Considerando a necessidade de aplicar o estudo de avaliação econômica a
+transtornos psiquiátricos, o estudo de uma das mais prevalente doenças e
+com pior impacto econômico e social mostra extremamente necessária. Neste
+dispositivo, a avaliação do Transtorno Afetivo Bipolar (TAB) reveste-se 
+de importância ímpar para melhora aplicação dos dispositivos e tratamentos
+existentes ao seu tratamento.
 
 O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica,
 que afeta entre 1 e 5% da população mundial \cite{scaini}.
@@ -93,11 +100,11 @@ persistente e com curso deteriorante. Episódios recorrentes influenciam
 o desfecho clínico e aumentam a vulnerabilidade individual a novos
 episódios, além de reduzir a resposta ao tratamento \cite{gana}.A doença manifesta-se, geralmente, na adolescência e em adultos jovens com uma média de início de 25 anos \cite{canmat}. 
 
-Apesar de intervenções psicológicas, sociais e ocupacionais mostrarem-se importantes para o manejo do TAB, o uso de medicações é o pilar do tratamento, sendo necessário para a condução das condições depressivas, maníacas e profiláticas contra recaídas \cite{smith}. O tratamento é feito com medicações estabilizadoras de humor, como carbonato de lítio e anticonvulsivantes, além de medicações antipsicóticas. Estima-se que o custo anual com o tratamento da condição encontre-se entre US\$1904, para quadros não complicados, a US\$33090 em condições que exijam internação e intervenções psiquiátricas mais frequentes.  
+Apesar de intervenções psicológicas, sociais e ocupacionais mostrarem-se importantes para o manejo do TAB, o uso de medicações é o pilar do tratamento, sendo necessário para a condução das condições depressivas, maníacas e de forma profiláticas contra recaídas \cite{smith}. O tratamento é feito com medicações estabilizadoras de humor, como carbonato de lítio e anticonvulsivantes, além de medicações antipsicóticas. Estima-se que o custo anual com o tratamento da condição encontre-se entre US\$1904, para quadros não complicados, a US\$33090 em condições que exijam internação e intervenções psiquiátricas mais frequentes.  
 
-O objetivo desse trabalho foi então avaliar a custo-efetividade do
-tratamento de primeira classe ou nenhum considerando a internacao...
-(elaborar melhor) utilizando o pacote heemod
+O objetivo desse trabalho é avaliar a relação custo-benefício do
+tratamento padrão para o transtorno contra a condução sem nenhum tratamento
+utilizando o pacote heemod. 
 
 \newpage
 # Metodologia
@@ -314,13 +321,8 @@ semi-Markov. Nesse modelo consideraremos duas **estratégias**:
     Guidelines on the Management of Bipolar Disorder.
 
 Os estados do modelo são quatro: População Geral,Pré-Sintomático (ou com
-sintomas controlados), Sintomático e Morte. Apesar de o TAB não levar à
-morte diretamente, ele aumenta a chance de morte por suicídio de modo
-que a expectativa de vida de uma pessoas com TAB chega a ser de 10 anos
-a menos que a população geral.
+sintomas controlados), Sintomático e Morte. O tempo de início considerado da doença foi de 25 anos \cite{canmat}. Foi considerada a mortalidade geral para a população brasileira, conforme dados do IBGE. A taxa de morte em indivíduos com TAB foi estimada conforme a taxa de suicídios naquela população \cite{bauer}. As probabilidades de conversão para doença e para estados sintomáticos, com ou sem medicação, foram estimados a partir da prevalência da doença na população, taxas de incidência e risco.
 
-Os as probabilidades de transição foram estimados a partir da
-prevalência da doença na população, taxas de incidência e risco.
 
 ```{r echo=F}
 library(heemod)
@@ -330,19 +332,19 @@ library(heemod)
 mat_base <- define_transition(
   state_names = c("geral", "pre", "symp", "death"),
 
-  0.949,     0.05 , 0 ,  0.001,
-  0,     0.01,           0.9,   0.001, 
-  0,    0.1,        0.7           ,   0.2,
-  0,    0,             0,                1)
+  0.949,  0.05,   0 ,    0.001,
+  0,      0.01,   0.9,   0.001,
+  0,      0.1,    0.7,   0.2,
+  0,      0,      0,     1)
 
 mat_med <- define_transition(
   state_names = c("geral", "pre", "symp", "death"),
 
+  0.949,  0.05,   0 ,     0.001,
+  0,      0.01,   0.45,   0.001,
+  0,      0.7,    0.1,    0.2,
+  0,      0,      0,      1)
 
-  0.949,     0.05 , 0 ,  0.001,
-  0,     0.01,           0.45,   0.001, 
-  0,    0.7,        0.1           ,   0.2,
-  0,    0,             0,                1)
 
 ```
 
@@ -354,9 +356,6 @@ plot(mat_med)
 
 # Resultados e Discussão
 
-Os parâmetros da cadeia de transição foram obtidos como descrito
-anteriormente, assim como o custo dos estados. Seguindo as intruções do
-pacote, temos:
 
 ```{r}
 library(heemod)
@@ -369,89 +368,80 @@ library(heemod)
 par_mod <- define_parameters(
   age_base = 20,
   age_cycle = model_time + age_base,
-  p_death_all = 262828 / 214300000, #excesso de mortalidade causas naturais
-  p_death_disease = 0.2, # Probabilidade de morte por suicídio em TAB
+  p_death_all = 262828 / 214300000, # mortalidade geral
+  p_death_disease = 0.2,            # Taxa de suicídio em TAB
   p_death_symp = combine_probs(
      p_death_all,
      p_death_disease),
-  p_disease_base = 0.9, # Probabilidade da doença na população assinto
-  med_effect = 0.5 , # Efeito da medicação
-  prevalencia = 0.05,
-  p_disease_med = p_disease_base * med_effect , # Probabilidade recaída 
-  cost_hospit_cycle = 100000  , # Custo de cada ciclo de hospitalização
-  p_cured_base = 0.2,
-  p_cured_med = 0.7,
-  cost_med = 5000,
-  dr = 0.05,
-  qaly_disease = 0.5)
+  p_disease_base = 0.9, # Taxa crise na população com a doença
+  med_effect = 0.5 ,    # Efeito da medicação (protetor)
+  prevalencia = 0.05,   # Prevalência geral da doença
+  p_disease_med = p_disease_base * med_effect , # Probabilidade recaída medicada 
+  cost_hospit_cycle = 33090, # Custo de cada ciclo de hospitalização
+  p_cured_base = 0.2,    # Taxa de melhora basal
+  p_cured_med = 0.7,     # Taxa de melhor com medicação
+  cost_med = 1904,       # Custo anual da medicação
+  dr = 0.05,             # Discount rate
+  qaly_disease = 0.5)    # QALY
 
-```
-
-Em seguida, defini-se as matrizes, estados e estratégias.
-
-```{r}
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 # Transicoes
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 mat_base <- define_transition(
   state_names = c("geral", "pre", "symp", "death"),
 
-  C,     prevalencia, 0 ,               p_death_all,
-  0,     C,           p_disease_base,   p_death_all, 
-  0,    p_cured_base,        C           ,   p_death_symp,
-  0,    0,             0,                1)
+  C,    prevalencia,  0,               p_death_all,
+  0,    C,            p_disease_base,  p_death_all, 
+  0,    p_cured_base, C,               p_death_symp,
+  0,    0,            0,               1)
 
 mat_med <- define_transition(
   state_names = c("geral", "pre", "symp", "death"),
 
-  C,     prevalencia, 0 ,               p_death_all,
-  0,     C,           p_disease_med,   p_death_all, 
-  0,    p_cured_med,        C           ,   p_death_symp,
-  0,    0,             0,                1)
+  C,    prevalencia,  0,               p_death_all,
+  0,    C,            p_disease_med,   p_death_all, 
+  0,    p_cured_med,  C,               p_death_symp,
+  0,    0,            0,               1)
 
-
-
-
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 # Valores de estados
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 # custo_medicacao - custo do tratamento
 # custo_internacao - custo da internação
 # custo_total - custo total
-# qaly - anos de vida relacionados a saúde ajustados pela qualidade de vida
+# qaly - anos de vida relacionados a saúde ajustados pela
+# qualidade de vida
 #        1 - um ano em perfeita saúde
 #        0 - morte
-
-
 state_geral <- define_state(
-  cost_treat = 0,
-  cost_hospit = 0, # good health => no hospital expenses
-  cost_total = 0,
+  cost_treat  = 0, # Indivíduos sem doença
+  cost_hospit = 0, # Custo zero
+  cost_total  = 0,
   qaly = 1)
 
 state_pre <- define_state(
   cost_treat = dispatch_strategy(
-    base = 0, # no treatment => no treatment cost
-    med = cost_med),
-  cost_hospit = 0, # good health => no hospital expenses
-  cost_total = discount(cost_treat + cost_hospit, r = dr),
+    base = 0,                    # os saudáveis: sem tratamento
+    med  = cost_med),            # custo da medicação
+  cost_hospit = 0,               # ainda sem custo hospitalar
+  cost_total  = discount(cost_treat + cost_hospit, r = dr),
   qaly = 1)
 
 state_symp <- define_state(
-  cost_treat = 0,
+  cost_treat  = 0,
   cost_hospit = cost_hospit_cycle,
-  cost_total = discount(cost_treat + cost_hospit, r = dr),
+  cost_total  = discount(cost_treat + cost_hospit, r = dr),
   qaly = qaly_disease)
 
 state_death <- define_state(
-  cost_treat = 0,
+  cost_treat  = 0,
   cost_hospit = 0,
-  cost_total = 0,
-  qaly = 0)
+  cost_total  = 0,
+  qaly        = 0)
 
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 # Estrategias
-# ------------------------------------------------------------------------
+# -----------------------------------------------------------------------
 strat_base <- define_strategy(
   transition = mat_base,
   geral = state_geral,
@@ -466,12 +456,6 @@ strat_med <- define_strategy(
   symp = state_symp,
   death = state_death)
 
-
-```
-
-Finalmente, ajusta-se o modelo, definindo-se a quantidade de ciclos.
-
-```{r}
 res_mod <- run_model(
   parameters = par_mod,
   base = strat_base,
@@ -480,16 +464,84 @@ res_mod <- run_model(
   cost = cost_total,
   effect = qaly,
   method = "life-table")
-```
 
-Podemos observar o seguinte resultado:
-
-```{r, fig.cap="Quarente ciclos no modelo de Markov comparando as duas estartegias"}
-plot(res_mod)
 ```
 
 
-Finalmente, podemos an
+As estratégias comparadas *sem intervenção* e *com medicação* apresentaram diferentes comportamentos ao longo da evoluçaõ do processo. O número de pessoas apresentando cada um dos desfechos clínicos anteriormente apresentados, ao longo de 40 anos após o início da doença, é exibido na imagem a seguir. 
+
+
+```{r figura1, fig.cap="Quarenta ciclos no modelo de Semi-Markov comparando as duas estratégias"}
+plot(res_mod) +
+  xlab("Tempo (anos)") +
+  ylab("N. de individuos") +
+  theme_minimal() +
+  scale_color_brewer(
+    name = "Estado",
+    palette = "Set1") 
+```
+Observa-se, inicialmente, uma inversão na quantidade de indivíduos sintomáticos e nos indivíduos suscetíveis com as duas estratégias. Enquanto na ausência de tratamento (*base*), temos uma maior quantidade de indivíduos sintomáticos, comparados aos suscetíveis; na presença de tratamento (*med*), temos uma menos quantidade de indivíduos sintomáticos, o que revela a importância do adequado tratametno da condição. Além disso, observa-se que a taxa de mortes no grupo *sem tratamento* é muito maior que no grupo *tratado*. A diferença entre o número de morte nas duas estratégias refere-se ao número de suicídios observado especialmente nas fases sintomáticas da doença. Trata-se, portanto, de uma causa tratável de morte com grande implicação no grupo observado. 
+
+```{r figura2, fig.cap="Comparação de estratégias para cada estado"}
+
+plot(res_mod, type = "counts", panel = "by_state") +
+  xlab("Tempo (anos)") +
+  ylab("N. de individuos") +
+  theme_light() +
+  scale_color_brewer(
+    name = "Estrategia",
+    palette = "Set1")
+```
+
+As estratégias podem ser comparadas em relação a cada um dos seus estados mostrando uma redução da mortalidade, uma redução de indivíduos sintomáticos e um aumento de indivíduos suscetíveis.
+
+O custo por pessoa com ambas as estratégias difere de forma significativa. Para uma população projetada de 1000 pessoas, a estratégia sem tratamento, mesmo não havendo custo de tratamento, leva a maior quantidade de pessoas sintomáticas que necessitarão de internação, uma intervenção mais cara. Observa-se que, logo no início do processo, o custo extra com a medicação dilui-se rapidamente e o custo total é menor para o grupo que usou medicação. 
+
+```{r figura3, position="H", fig.cap="Comparação de custos para cada estado"}
+plot(res_mod, type =
+       "values", panel = "by_value") +
+  xlab("Tempo (anos)") +
+  ylab("Valor") +
+  theme_light() +
+  scale_color_brewer(
+    name = "Estrategia",
+    palette = "Set1")
+```
+O custo esperado para 1000 pessoas, durante o período de tempo considerado, é estimado como US\$47.468.712,00 para a estratégia sem tratamento e US\$34.775.500,00 para a estratégia com medicação. A diferença de custo é de US\$12.693,21. 
+
+A **razão incremental de custo-benefício** (**ICER**) é o custo do incremento de uma unidade de benefício. Em relação ao não-tratamento, o uso de medicação mostra um ICER de -6749,82. Tem-se, portanto, um incremento de benefício a um custo mais baixo que a outra estratégia. Com a estratégia medicamentosa, há uma economia de 6749,82 por unidade QALY ganha.  
+
+Uma análise de incerteza pode sugerir diferenças relacionadas a estimação dos parâmetros utilizados para o modelo. Adota-se a estratégia DSA, na qual promove-se incrementos e decrementos nos parâmetros e observa-se o comportamento do desfecho analisado. Esta técnica possibilita a visualização do impacto relativa de cada parâmetro na incerteza do modelo. Para o modelo de intervenção com medicamentos, temos o seguinte gráfico tornado, que ilustra como cada fator altera a incerteza do modelo.
+
+```{r figura4, position="H", out.width="80%", fig.cap="Comparação de custos para cada estado"}
+# -----------------------------------------------------------------------
+# Sensibilidade
+# -----------------------------------------------------------------------
+def_dsa <- define_dsa(
+  age_base,             10,     40,
+  p_death_disease,     0.02,    0.25,            
+  p_disease_base,      0.2,    0.7,
+  med_effect,          0.2,    0.7,    
+  prevalencia,        0.02,    0.1,   
+  cost_hospit_cycle, 10000, 100000, 
+  p_cured_base,        0.2,    0.5,    
+  p_cured_med,         0.2,    0.5,   
+  cost_med,           1000,   3000,       
+  dr,                    0,    0.5,             
+  qaly_disease,        0.2,    0.5
+  ) 
+
+res_dsa <- run_dsa(res_mod, dsa = def_dsa)
+
+plot(res_dsa, 
+     type = c("simple"),
+     result = "effect", 
+     strategy = "med",
+     widest_on_top = TRUE,
+     limits_by_bars = TRUE) 
+```
+
+
 # Conclusão
 
 Este relatório ilustrou a aplicabilidade e a eficácia dos modelos de Markov na avaliação econômica em saúde, com um foco particular no Transtorno Afetivo Bipolar (TAB). Através do uso do pacote heemod na linguagem R, demonstramos como as cadeias de Markov homogêneas podem simplificar e esclarecer a análise de custo-efetividade em estratégias de tratamento. Ao comparar a não intervenção com o tratamento de primeira linha, os resultados sugerem um claro benefício no uso de medicamentos, evidenciado pelo aumento de anos de vida ajustados pela qualidade e pela redução dos custos totais ao longo de um horizonte temporal de quatro décadas. Tal benefício transcende as métricas econômicas, refletindo um potencial impacto positivo significativo na qualidade de vida dos pacientes.
@@ -499,6 +551,7 @@ Além disso, a discussão sobre a expansão potencial para modelos semi-Markov d
 Portanto, concluímos que a modelagem de Markov representa uma ferramenta robusta e flexível, essencial para a tomada de decisões informadas em saúde pública. A incorporação desses modelos em avaliações econômicas fornece insights valiosos que podem guiar políticas de saúde, otimizar o uso de recursos e, o mais importante, melhorar os desfechos para os pacientes. A continuidade na pesquisa e no desenvolvimento de métodos avançados de modelagem, como os explorados neste relatório, é crucial para enfrentarmos os desafios da economia da saúde no Brasil e no mundo.
 
 \newpage
+
 # Apêndice
 
 ```{r ref.label=knitr::all_labels(), echo=TRUE, eval=FALSE}
