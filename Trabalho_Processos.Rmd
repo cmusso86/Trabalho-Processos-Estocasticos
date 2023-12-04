@@ -75,7 +75,7 @@ de Markov em avaliações econômicas de saúde, tornando o processo mais
 acessível e eficiente \cite{heemodpaper, heemodman}
 
 O Transtorno Afetivo Bipolar é uma doença psiquiátrica grave e crônica,
-que afeta entre 1 e 4% da população mundial \cite{scaini}.
+que afeta entre 1 e 5% da população mundial \cite{scaini}.
 Caracteriza-se por uma mudança sustentada de humor, com alternância
 entre polos, que recebem os nomes de mania e depressão, ou leva a
 estados mistos, normalmente associados a grande prejuízo funcional. A
@@ -85,13 +85,12 @@ característicos e é o principal marcador clínico diagnóstico do TAB
 \cite{dsm}. Para um grupo de pessoas, a doença leva a um quadro crônico,
 persistente e com curso deteriorante. Episódios recorrentes influenciam
 o desfecho clínico e aumentam a vulnerabilidade individual a novos
-episódios, além de reduzir a resposta ao tratamento \cite{gana}.
+episódios, além de reduzir a resposta ao tratamento \cite{gana}.A doença manifesta-se, geralmente, na adolescência e em adultos jovens com uma média de início de 25 anos \cite{canmat}. 
 
-O tratamento consiste em ...
+Apesar de intervenções psicológicas, sociais e ocupacionais mostrarem-se importantes para o manejo do TAB, o uso de medicações é o pilar do tratamento, sendo necessário para a condução das condições depressivas, maníacas e profiláticas contra recaídas \cite{smith}. O tratamento é feito com medicações estabilizadoras de humor, como carbonato de lítio e anticonvulsivantes, além de medicações antipsicóticas. Estima-se que o custo anual com o tratamento da condição encontre-se entre US\$1904, para quadros não complicados, a US\$33090 em condições que exijam internação e intervenções psiquiátricas mais frequentes.  
 
-O objetivo desse trabalho foi então avaliar a custo-efetividade do
-tratamento de primeira classe ou nenhum considerando a internacao...
-(elaborar melhor) utilizando o pacote heemod
+O objetivo desse trabalho foi então avaliar o custo-efetividade do
+tratamento padrão para o transtorno afetivo bipolar contra a estratégia de nenhum. 
 
 # Metodologia
 
@@ -205,25 +204,15 @@ Onde \( P(A \to B) \) é a probabilidade de transição entre o estado A e B, \(
 
 Assim, nos modelos semi-Markov, matrizes de transição multidimensionais são usadas para capturar a dependência temporal, permitindo que o modelo reflita mais precisamente como o estado de saúde de um paciente muda ao longo do tempo e em resposta a diferentes tratamentos. Esse nível de detalhamento é particularmente útil para doenças com progressão complexa ou tratamentos que têm efeitos variáveis ao longo do tempo, tornando os modelos semi-Markov uma ferramenta valiosa em estudos de custo-efetividade e na tomada de decisões em saúde.
 
-## Descrição da questão
+Para a modelagem proposta, foram observados 20 transições de um processo Semi-Markov, com tempo de início da doença aos 25 anos \cite{canmat}. Foi considerada a mortalidade geral para a população brasileira, conforme dados do IBGE. A taxa de morte em indivíduos com TAB foi estimada conforme a taxa de suicídios naquela população \cite{bauer}
 
-Será modelado o transtorno afetivo bipolar.
+# Resultados e discussão
 
-## Estratégias comparadas
 
-Consideraremos duas estratégias: - Não tratamento - Tratamento de
-primeira linha conforme as diretrizes CANMAT and ISBD Guidelines on the
-Management of Bipolar Disorder.
 
-## Estados:
 
-Estado assintomático Sintomático Internação
 
-## Parâmetros do modelo:
 
-# Resultados
-
-# Discussão
 
 # Conclusão
 
