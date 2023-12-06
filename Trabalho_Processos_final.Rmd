@@ -343,8 +343,7 @@ semi-Markov. Nesse modelo consideraremos duas **estratégias**:
 -   Tratamento de primeira linha conforme as diretrizes CANMAT and ISBD
     Guidelines on the Management of Bipolar Disorder.
 
-Os estados do modelo são quatro: População Geral, Pré-Sintomático (ou com
-sintomas controlados), Sintomático e Morte. O tempo de início considerado da doença foi de 25 anos \cite{canmat}. Foi considerada a mortalidade geral para a população brasileira, conforme dados do IBGE. A taxa de morte em indivíduos com TAB foi estimada conforme a taxa de suicídios naquela população \cite{bauer}. As probabilidades de conversão para doença e para estados sintomáticos, com ou sem medicação, foram estimados a partir da prevalência da doença na população, taxas de incidência e risco. As matrizes em \@ref(fig:mat) observamos as probabilidades de transição em cada uma das estratégias. 
+Os estados do modelo são quatro: População Geral, Pré-Sintomático (ou pacientes já diagnosticados com o transtorno, mas que se encontram, naquele momento, assintomáticos), Sintomático (pacientes com diagnóstico do transtorno e, naquele momento, sintomáticos) e Morte. O tempo de início considerado da doença foi de 25 anos \cite{canmat}. Foi considerada a mortalidade geral para a população brasileira, conforme dados do IBGE. A taxa de morte em indivíduos com TAB foi estimada conforme a taxa de suicídios naquela população \cite{bauer}. As probabilidades de conversão para doença e para estados sintomáticos, com ou sem medicação, foram estimados a partir da prevalência da doença na população \cite{canmat}, taxas de incidência \cite{hett} e risco \cite{amann}. As matrizes em \@ref(fig:mat) observamos as probabilidades de transição em cada uma das estratégias. 
 
 
 ```{r echo=F}
@@ -534,7 +533,7 @@ plot(res_mod, type =
 
 O custo esperado para 1000 pessoas, durante o período de tempo considerado, é estimado como US\$61.369.969,00 para a estratégia sem tratamento e US\$51.163.017,00 para a estratégia com medicação. A diferença de custo é de US\$10.206,21. 
 
-A **razão incremental de custo-benefício** (**ICER**) é o custo do incremento de uma unidade de benefício. Em relação ao não-tratamento, o uso de medicação mostra um ICER de -2.171,36. Tem-se, portanto, um incremento de benefício a um custo mais baixo que a outra estratégia. Com a estratégia medicamentosa, há uma economia de 2.171,82 por unidade QALY ganha (\@ref(fif:icer)). 
+A **razão incremental de custo-benefício** (**ICER**) é o custo do incremento de uma unidade de benefício. Em relação ao não-tratamento, o uso de medicação mostra um ICER de -2.171,36. Tem-se, portanto, um incremento de benefício a um custo mais baixo que a outra estratégia. Com a estratégia medicamentosa, há uma economia de 2.171,82 por unidade QALY ganha (\@ref(fig:figicer)). 
 
 ```{r figicer, echo=F, out.width="70%", fig.cap="Relação dda diferença de Quality-ajustes life-years e de custo entre as suas estratégias."}
 ggplot()+
